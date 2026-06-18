@@ -24,7 +24,10 @@ keywords = [
 requires-python = ">=3.10.12,<3.14"
 dependencies = [
   "inspect-ai",
+  "inspect-evals",
   "typer",
+  "accelerate",
+  "openclaw",
 ]
 
 [project.optional-dependencies]
