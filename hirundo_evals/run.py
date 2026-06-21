@@ -175,6 +175,12 @@ def main(
     log_dir = str(Path(output_dir) / datetime.now().strftime("%Y%m%d_%H%M%S"))
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(log_dir, exist_ok=True)
+    logging.info(
+        f"🚀 Starting evaluation suite on {len(parsed_tasks)} tasks: {', '.join(parsed_tasks)}"
+    )
+    logging.info(f"🧠 Model: {model}")
+    logging.info(f"📁 Log Directory: {log_dir}")
+    logging.info(f"📊 CSV Output: {Path(output_dir) / 'results.csv'}")
     # Get the evaluation framework wrapper
     framework_wrapper = _get_eval_framework_wrapper(framework, model, parsed_tasks, log_dir)
     # Run the evaluation
@@ -184,6 +190,7 @@ def main(
     else:
         # Run the evaluation without a local vLLM server
         framework_wrapper.run(extra=ctx.args)
+    logging.info(f"\n✅ Evaluation Suite Complete! Logs saved to: {log_dir}")
     # Export the results to a CSV file
     framework_wrapper.export_results(os.path.join(output_dir, "results.csv"))
 

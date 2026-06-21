@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import http.client
+import logging
 import shlex
 import sys
 import time
@@ -69,10 +70,12 @@ async def serve_vllm(
     else:
         process.terminate()
         await process.wait()
-        raise RuntimeError(f"vLLM server failed to start within {timeout} seconds")
+        raise RuntimeError(f"❌ vLLM server failed to start within {timeout} seconds")
 
     try:
         yield server_url
     finally:
+        logging.info("🛑 Shutting down managed vLLM server...")
         process.terminate()
         await process.wait()
+        logging.info("✅ Server safely terminated.")
