@@ -1,52 +1,76 @@
 # Hirundo Evals
 
-An evaluation suite wrapping [inspect-ai](https://github.com/UKGovernmentBEIS/inspect_ai) and other open-source evaluation frameworks.
+An evaluation CLI for running LLM benchmarks through [Inspect AI](https://github.com/UKGovernmentBEIS/inspect_ai) and future evaluation framework adapters.
 
 ## Features
 
-- Wrapper for `inspect-ai` tasks.
-- Integrated support for `vLLM` inference. You can use vLLM either through Inspect AI's native integration or run a local vLLM server managed dynamically using Python's `asyncio`.
+- Inspect AI task aliases for common benchmarks such as `aime25`, `gpqa`, `ifeval`, `livecodebench`, `mmlu-pro`, and `scicode`.
+- Optional managed local vLLM server with OpenAI-compatible routing into Inspect.
+- Per-run raw framework logs plus an appended summary CSV.
 
 ## Installation
-
-Using `uv`:
 
 ```bash
 uv venv .venv
 source .venv/bin/activate
-uv pip install -e .
-# Note: Add dependencies in pyproject.toml as needed.
-uv pip install typer inspect-ai vllm
+uv pip install --python .venv/bin/python -e .
+```
+
+Install vLLM support when you need managed local serving:
+
+```bash
+uv pip install --python .venv/bin/python -e ".[vllm]"
 ```
 
 ## Usage
 
-You can use the `run.py` script which utilizes `typer` to accept arguments and pass them down to `inspect-ai`.
-
-### Basic Usage
-
 ```bash
-python run.py path/to/your_task_module.py --model openai/gpt-3.5-turbo
+hirundo-evals MODEL inspect-ai TASK[,TASK...] [OPTIONS] [INSPECT_OPTIONS]
 ```
 
-### Running with a Native vLLM Model
-
-If `inspect-ai` supports `vLLM` directly, you can pass the model string as expected by their provider:
+Prefer the console script after editable install, or use:
 
 ```bash
-python run.py path/to/your_task_module.py --model vllm/facebook/opt-125m
+python -m hirundo_evals MODEL inspect-ai TASK[,TASK...] [OPTIONS] [INSPECT_OPTIONS]
 ```
 
-### Running with a Managed Local vLLM Server
-
-If you'd like the suite to spin up a local vLLM OpenAI-compatible API server using `asyncio` and point `inspect-ai` to it:
+### Basic Inspect Run
 
 ```bash
-python run.py path/to/your_task_module.py \
-    --model facebook/opt-125m \
+hirundo-evals ibm-granite/granite-4.1-3b inspect-ai aime25 --limit 1
+```
+
+Multiple tasks are comma-separated:
+
+```bash
+hirundo-evals ibm-granite/granite-4.1-3b inspect-ai aime25,gpqa --limit 1
+```
+
+Bare Hugging Face model IDs are passed to Inspect as `hf/<model>`. Explicit provider prefixes such as `openai/...` are preserved.
+
+### Managed Local vLLM
+
+```bash
+hirundo-evals ibm-granite/granite-4.1-3b inspect-ai aime25 \
     --vllm-local \
-    --vllm-args="--tensor-parallel-size 1"
+    --vllm-devices 0 \
+    --vllm-args "--tensor-parallel-size 1" \
+    --limit 1
 ```
+
+The managed vLLM path starts a local OpenAI-compatible server, sets a temporary dummy `OPENAI_API_KEY`, and forwards Inspect to the local server URL.
+
+### Outputs
+
+By default, outputs are written under `logs/<model>/<run_timestamp>/`, with a summary CSV at `logs/<model>/results.csv`.
+
+```bash
+hirundo-evals ibm-granite/granite-4.1-3b inspect-ai mmlu-pro \
+    --output-dir eval_outputs \
+    --limit 1
+```
+
+The summary CSV is appended across runs and includes fields such as framework, run ID, benchmark, metric, score, and runtime.
 
 ## Contributing
 
