@@ -2,6 +2,9 @@
 requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project.scripts]
+hirundo-evals = "hirundo_evals.run:app"
+
 [project]
 name = "hirundo-evals"
 version = "0.1.0"
@@ -24,7 +27,11 @@ keywords = [
 requires-python = ">=3.10.12,<3.14"
 dependencies = [
   "inspect-ai",
+  "inspect-evals",
+  "instruction-following-eval @ git+https://github.com/josejg/instruction_following_eval",
+  "accelerate",
   "typer",
+  "bidict",
 ]
 
 [project.optional-dependencies]
