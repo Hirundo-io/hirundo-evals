@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import http.client
+import logging
 import shlex
 import sys
 import time
@@ -30,7 +31,7 @@ def _is_server_ready(url: str) -> bool:
 
 @contextlib.asynccontextmanager
 async def serve_vllm(
-    model: str, vllm_args: str | None = None, port: int = 8000, timeout: int = 120
+    model: str, vllm_args: str | None = None, port: int = 8000, timeout: int = 600
 ):
     """
     Context manager to start and stop a local vLLM OpenAI-compatible server.
@@ -53,9 +54,9 @@ async def serve_vllm(
     if vllm_args:
         cmd.extend(shlex.split(vllm_args))
 
-    # Start the server subprocess
+    # Inherit stdout/stderr so vLLM startup and runtime logs are visible.
     process = await asyncio.create_subprocess_exec(
-        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        *cmd,
     )
 
     server_url = f"http://localhost:{port}/v1"
@@ -69,10 +70,12 @@ async def serve_vllm(
     else:
         process.terminate()
         await process.wait()
-        raise RuntimeError(f"vLLM server failed to start within {timeout} seconds")
+        raise RuntimeError(f"❌ vLLM server failed to start within {timeout} seconds")
 
     try:
         yield server_url
     finally:
+        logging.info("🛑 Shutting down managed vLLM server...")
         process.terminate()
         await process.wait()
+        logging.info("✅ Server safely terminated.")
