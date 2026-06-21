@@ -164,7 +164,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         run_id = Path(self.log_dir).name
         for log in logs:
             task_name = log.eval.task
-            alias = InspectWrapper.TASK_TO_BENCHMARK.inv[task_name]
+            alias = InspectWrapper.TASK_TO_BENCHMARK.inv.get(task_name, task_name)
             target_metric = InspectWrapper.FINAL_METRIC_BY_BENCHMARK.get(alias, "unknown_metric")
             status = log.status
             score_value = "N/A"
@@ -198,7 +198,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
                         "Framework": "inspect-ai",
                         "Benchmark": alias,
                         "Metric": target_metric + " (%) ⬆️",
-                        "Score": float(score_value),
+                        "Score": score_value,
                         "Runtime (sec)": runtime,
                     }
                 )

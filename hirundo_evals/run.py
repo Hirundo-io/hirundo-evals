@@ -190,7 +190,7 @@ def main(
     else:
         # Run the evaluation without a local vLLM server
         framework_wrapper.run(extra=ctx.args)
-    logging.info(f"\n✅ Evaluation Suite Complete! Logs saved to: {log_dir}")
+    logging.info(f"✅ Evaluation Suite Complete! Logs saved to: {log_dir}")
     # Export the results to a CSV file
     framework_wrapper.export_results(os.path.join(output_dir, "results.csv"))
 
