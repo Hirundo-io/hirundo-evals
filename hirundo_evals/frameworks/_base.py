@@ -12,7 +12,7 @@ OutputEntry = TypedDict(
         "Framework": str,
         "Benchmark": str,
         "Metric": str,
-        "Score": float,
+        "Score": float | str,
         "Runtime (sec)": int | str,
     },
 )
