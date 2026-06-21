@@ -69,6 +69,12 @@ class BaseEvalFrameworkWrapper(ABC):
         cmd = self.get_cli_cmd(model, model_base_url, extra)
         subprocess.run(cmd, check=True)  # noqa: S603
 
+    def get_vllm_args(self, vllm_args: str | None = None) -> str | None:
+        """
+        Return framework-specific vLLM server arguments.
+        """
+        return vllm_args
+
     @abstractmethod
     def prepare_results(self) -> list[OutputEntry]:
         """

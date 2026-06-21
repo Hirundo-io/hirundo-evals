@@ -10,6 +10,7 @@ import typer
 
 from .frameworks._base import BaseEvalFrameworkWrapper
 from .frameworks.inspect_ai import InspectWrapper
+from .frameworks.pinchbench import PinchBenchWrapper
 from .vllm_server import serve_vllm
 
 app = typer.Typer(
@@ -19,7 +20,7 @@ app = typer.Typer(
 
 class EvalFramework(str, Enum):
     INSPECT = "inspect-ai"
-    # Add future frameworks here (e.g., ELEUTHER = "lm-eval", LIGHTEVAL = "lighteval")
+    PINCHBENCH = "pinchbench"
 
 
 def _get_eval_framework_wrapper(
@@ -38,6 +39,8 @@ def _get_eval_framework_wrapper(
     """
     if framework == EvalFramework.INSPECT:
         wrapper = InspectWrapper
+    elif framework == EvalFramework.PINCHBENCH:
+        wrapper = PinchBenchWrapper
     else:
         raise NotImplementedError(f"Framework '{framework}' is not yet supported.")
 
@@ -89,7 +92,9 @@ async def run_with_vllm(
     os.environ.setdefault("OPENAI_API_KEY", "dummy_key")
 
     try:
-        async with serve_vllm(framework_wrapper.model, vllm_args) as server_url:
+        async with serve_vllm(
+            framework_wrapper.model, framework_wrapper.get_vllm_args(vllm_args)
+        ) as server_url:
             # Map the model to use the local OpenAI compatible endpoint
             local_model = f"openai/{framework_wrapper.model}"
             # Use asyncio.to_thread to run the blocking eval without stopping the event loop
