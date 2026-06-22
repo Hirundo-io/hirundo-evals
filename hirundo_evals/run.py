@@ -9,8 +9,6 @@ from typing import Annotated
 import typer
 
 from .frameworks._base import BaseEvalFrameworkWrapper
-from .frameworks.inspect_ai import InspectWrapper
-from .frameworks.pinchbench import PinchBenchWrapper
 from .vllm_server import serve_vllm
 
 app = typer.Typer(
@@ -38,8 +36,12 @@ def _get_eval_framework_wrapper(
         The evaluation framework wrapper.
     """
     if framework == EvalFramework.INSPECT:
+        from .frameworks.inspect_ai import InspectWrapper
+
         wrapper = InspectWrapper
     elif framework == EvalFramework.PINCHBENCH:
+        from .frameworks.pinchbench import PinchBenchWrapper
+
         wrapper = PinchBenchWrapper
     else:
         raise NotImplementedError(f"Framework '{framework}' is not yet supported.")
