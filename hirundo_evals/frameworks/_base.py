@@ -75,6 +75,18 @@ class BaseEvalFrameworkWrapper(ABC):
         """
         return vllm_args
 
+    def supports_managed_vllm(self) -> bool:
+        """
+        Whether this framework can use Hirundo Evals' managed OpenAI-compatible vLLM server.
+        """
+        return True
+
+    def get_framework_vllm_args(self, extra: list[str] | None = None) -> list[str]:
+        """
+        Return framework-specific CLI arguments for native vLLM execution.
+        """
+        return extra or []
+
     @abstractmethod
     def prepare_results(self) -> list[OutputEntry]:
         """

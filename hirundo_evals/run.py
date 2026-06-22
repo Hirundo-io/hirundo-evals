@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 import asyncio
 import logging
 import os
@@ -9,8 +10,6 @@ from typing import Annotated
 import typer
 
 from .frameworks._base import BaseEvalFrameworkWrapper
-from .frameworks.inspect_ai import InspectWrapper
-from .frameworks.pinchbench import PinchBenchWrapper
 from .vllm_server import serve_vllm
 
 app = typer.Typer(
@@ -20,6 +19,7 @@ app = typer.Typer(
 
 class EvalFramework(str, Enum):
     INSPECT = "inspect-ai"
+    LLM_BEHAVIOR_EVAL = "llm-behavior-eval"
     PINCHBENCH = "pinchbench"
 
 
@@ -38,8 +38,16 @@ def _get_eval_framework_wrapper(
         The evaluation framework wrapper.
     """
     if framework == EvalFramework.INSPECT:
+        from .frameworks.inspect_ai import InspectWrapper
+
         wrapper = InspectWrapper
+    elif framework == EvalFramework.LLM_BEHAVIOR_EVAL:
+        from .frameworks.llm_behavior_eval import LLMBehaviorEvalWrapper
+
+        wrapper = LLMBehaviorEvalWrapper
     elif framework == EvalFramework.PINCHBENCH:
+        from .frameworks.pinchbench import PinchBenchWrapper
+
         wrapper = PinchBenchWrapper
     else:
         raise NotImplementedError(f"Framework '{framework}' is not yet supported.")
@@ -194,8 +202,16 @@ def main(
     )
     # Run the evaluation
     if vllm_local:
-        # Run the evaluation with a local vLLM server
-        asyncio.run(run_with_vllm(framework_wrapper, vllm_args, vllm_devices, ctx.args))
+        if framework_wrapper.supports_managed_vllm():
+            # Run the evaluation with a local OpenAI-compatible vLLM server
+            asyncio.run(
+                run_with_vllm(framework_wrapper, vllm_args, vllm_devices, ctx.args)
+            )
+        else:
+            # Let frameworks with native vLLM support configure their own backend.
+            framework_wrapper.run(
+                extra=framework_wrapper.get_framework_vllm_args(ctx.args)
+            )
     else:
         # Run the evaluation without a local vLLM server
         framework_wrapper.run(extra=ctx.args)
