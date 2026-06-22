@@ -59,7 +59,9 @@ def _parse_tasks(tasks: str) -> list[str]:
     """
     # Verify that the tasks are provided after the model and framework arguments
     if tasks.startswith("--"):
-        raise typer.BadParameter("Tasks must be provided after the model and framework arguments.")
+        raise typer.BadParameter(
+            "Tasks must be provided after the model and framework arguments."
+        )
     # Split the tasks by commas and strip whitespace
     parsed_tasks = [task.strip() for task in tasks.split(",") if task.strip()]
     # Verify that at least one task was provided
@@ -187,7 +189,9 @@ def main(
     logging.info(f"📁 Log Directory: {log_dir}")
     logging.info(f"📊 CSV Output: {Path(output_dir) / 'results.csv'}")
     # Get the evaluation framework wrapper
-    framework_wrapper = _get_eval_framework_wrapper(framework, model, parsed_tasks, log_dir)
+    framework_wrapper = _get_eval_framework_wrapper(
+        framework, model, parsed_tasks, log_dir
+    )
     # Run the evaluation
     if vllm_local:
         # Run the evaluation with a local vLLM server

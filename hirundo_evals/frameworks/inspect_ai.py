@@ -165,7 +165,9 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         for log in logs:
             task_name = log.eval.task
             alias = InspectWrapper.TASK_TO_BENCHMARK.inv.get(task_name, task_name)
-            target_metric = InspectWrapper.FINAL_METRIC_BY_BENCHMARK.get(alias, "unknown_metric")
+            target_metric = InspectWrapper.FINAL_METRIC_BY_BENCHMARK.get(
+                alias, "unknown_metric"
+            )
             status = log.status
             score_value = "N/A"
             runtime = "N/A"
