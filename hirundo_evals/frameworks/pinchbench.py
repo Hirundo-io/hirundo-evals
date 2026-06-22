@@ -76,47 +76,12 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
             with output_path.open(encoding="utf-8") as f:
                 output = json.load(f)
 
-            run_id = str(output.get("run_id") or Path(self.log_dir).name)
-            suite = str(output.get("suite") or self.DEFAULT_SUITE)
+            run_id = str(Path(self.log_dir).name)
             runtime = (
                 output.get("efficiency", {}).get("total_execution_time_seconds", "N/A")
             )
 
             tasks = output.get("tasks", [])
-            if tasks:
-                task_scores = [
-                    task.get("grading", {}).get("mean")
-                    for task in tasks
-                    if task.get("grading", {}).get("mean") is not None
-                ]
-                if task_scores:
-                    results.append(
-                        OutputEntry(
-                            {
-                                "Run ID": run_id,
-                                "Framework": "pinchbench",
-                                "Benchmark": suite,
-                                "Metric": "mean_score (%) ⬆️",
-                                "Score": sum(task_scores) / len(task_scores) * 100.0,
-                                "Runtime (sec)": runtime,
-                            }
-                        )
-                    )
-
-            for category, category_score in output.get("category_scores", {}).items():
-                results.append(
-                    OutputEntry(
-                        {
-                            "Run ID": run_id,
-                            "Framework": "pinchbench",
-                            "Benchmark": f"{suite}:{category.lower()}",
-                            "Metric": "category_score (%) ⬆️",
-                            "Score": float(category_score.get("pct", 0.0)),
-                            "Runtime (sec)": runtime,
-                        }
-                    )
-                )
-
             for task in tasks:
                 grading = task.get("grading", {})
                 score = grading.get("mean")
@@ -127,10 +92,10 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
                         {
                             "Run ID": run_id,
                             "Framework": "pinchbench",
-                            "Benchmark": str(task.get("task_id", suite)),
-                            "Metric": "task_score (%) ⬆️",
+                            "Benchmark": str(task.get("task_id", "unknown_task")),
+                            "Metric": "overall_score (%) ⬆️",
                             "Score": float(score) * 100.0,
-                            "Runtime (sec)": task.get("execution_time", runtime),
+                            "Runtime (sec)": int(task.get("execution_time", runtime)),
                         }
                     )
                 )

@@ -85,6 +85,15 @@ class BaseEvalFrameworkWrapper(ABC):
         """
         raise NotImplementedError
 
+    @staticmethod
+    def _format_output_row(row: OutputEntry) -> dict[str, object]:
+        formatted_row = dict(row)
+        score = formatted_row.get("Score")
+        if isinstance(score, int | float):
+            formatted_row["Score"] = f"{score:.2f}"
+
+        return formatted_row
+
     def export_results(self, output_path: str) -> None:
         """
         Export the results of the evaluation to a CSV file.
@@ -94,7 +103,7 @@ class BaseEvalFrameworkWrapper(ABC):
             output_path: The path to the output CSV file.
         """
         # Prepare the results for CSV export
-        results = self.prepare_results()
+        results = [self._format_output_row(row) for row in self.prepare_results()]
         fieldnames = list(get_type_hints(OutputEntry).keys())
         try:
             existing_rows: list[dict[str, str]] = []
