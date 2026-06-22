@@ -99,7 +99,6 @@ class BaseEvalFrameworkWrapper(ABC):
         Export the results of the evaluation to a CSV file.
 
         Args:
-            outputs: The outputs of the evaluation.
             output_path: The path to the output CSV file.
         """
         # Prepare the results for CSV export
