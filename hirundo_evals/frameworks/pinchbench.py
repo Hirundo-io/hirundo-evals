@@ -58,7 +58,9 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
         extra: list[str] | None = None,
     ) -> None:
         if not model_base_url:
-            raise ValueError("PinchBench requires --vllm-local so OpenClaw can reach a local model server.")
+            raise ValueError(
+                "PinchBench requires --vllm-local so OpenClaw can reach a local model server."
+            )
 
         model_id = self._pinchbench_model_name(model or self.model)
         env = os.environ.copy()
@@ -77,8 +79,8 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
                 output = json.load(f)
 
             run_id = str(Path(self.log_dir).name)
-            runtime = (
-                output.get("efficiency", {}).get("total_execution_time_seconds", "N/A")
+            runtime = output.get("efficiency", {}).get(
+                "total_execution_time_seconds", "N/A"
             )
 
             tasks = output.get("tasks", [])
@@ -112,11 +114,15 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
     @staticmethod
     def _require_tool(command: str, install_hint: str) -> None:
         if shutil.which(command) is None:
-            raise RuntimeError(f"`{command}` is required for PinchBench. {install_hint}")
+            raise RuntimeError(
+                f"`{command}` is required for PinchBench. {install_hint}"
+            )
 
     def _ensure_tooling(self) -> None:
         self._require_tool("git", "Install git and retry.")
-        self._require_tool("openclaw", "Install it with `npm install -g openclaw@latest`.")
+        self._require_tool(
+            "openclaw", "Install it with `npm install -g openclaw@latest`."
+        )
 
     def _ensure_skill_repo(self) -> str:
         skill_dir = os.path.join(self.log_dir, "pinchbench-skill")
