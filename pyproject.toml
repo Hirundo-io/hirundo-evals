@@ -104,3 +104,7 @@ unfixable = ["F401"]
 
 [tool.pyrefly]
 min-severity = "warn"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = [".git", ".venv", "dist", "logs"]
