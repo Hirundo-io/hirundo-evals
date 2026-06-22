@@ -78,7 +78,7 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
             with output_path.open(encoding="utf-8") as f:
                 output = json.load(f)
 
-            run_id = str(Path(self.log_dir).name)
+            run_id = Path(self.log_dir).name
             runtime = output.get("efficiency", {}).get(
                 "total_execution_time_seconds", "N/A"
             )
