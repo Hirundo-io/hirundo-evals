@@ -2,54 +2,18 @@ import asyncio
 import logging
 import os
 from datetime import datetime
-from enum import Enum
 from pathlib import Path
 from typing import Annotated
 
 import typer
 
 from .frameworks._base import BaseEvalFrameworkWrapper
+from .frameworks.registry import EvalFramework, get_eval_framework_wrapper
 from .vllm_server import serve_vllm
 
 app = typer.Typer(
     help="Hirundo Evals: A CLI for running LLM evaluations through framework adapters."
 )
-
-
-class EvalFramework(str, Enum):
-    INSPECT = "inspect-ai"
-    PINCHBENCH = "pinchbench"
-
-
-def _get_eval_framework_wrapper(
-    framework: EvalFramework, model: str, tasks: list[str], log_dir: str
-) -> BaseEvalFrameworkWrapper:
-    """
-    Get the evaluation framework wrapper for the given framework.
-
-    Args:
-        framework: The evaluation framework to get the wrapper for.
-        model: The model to evaluate.
-        tasks: The tasks/benchmarks to evaluate.
-
-    Returns:
-        The evaluation framework wrapper.
-    """
-    if framework == EvalFramework.INSPECT:
-        from .frameworks.inspect_ai.wrapper import InspectWrapper
-
-        wrapper = InspectWrapper
-    elif framework == EvalFramework.PINCHBENCH:
-        from .frameworks.pinchbench import PinchBenchWrapper
-
-        wrapper = PinchBenchWrapper
-    else:
-        raise NotImplementedError(
-            f"Framework '{framework}' is not yet supported. "
-            f"Currently supported frameworks: {', '.join(e.value for e in EvalFramework)}"
-        )
-
-    return wrapper(model, tasks, log_dir)
 
 
 def _parse_tasks(tasks: str) -> list[str]:
@@ -194,7 +158,7 @@ def main(
     logging.info(f"📁 Log Directory: {log_dir}")
     logging.info(f"📊 CSV Output: {Path(output_dir) / 'results.csv'}")
     # Get the evaluation framework wrapper
-    framework_wrapper = _get_eval_framework_wrapper(
+    framework_wrapper = get_eval_framework_wrapper(
         framework, model, parsed_tasks, log_dir
     )
     # Run the evaluation

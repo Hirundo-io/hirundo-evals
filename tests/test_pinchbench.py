@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from hirundo_evals.frameworks.pinchbench import PinchBenchWrapper
+from hirundo_evals.frameworks.pinchbench.wrapper import PinchBenchWrapper
 
 
 def test_pinchbench_adds_required_vllm_tool_call_args() -> None:
