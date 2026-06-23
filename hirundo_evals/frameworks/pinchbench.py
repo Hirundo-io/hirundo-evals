@@ -21,7 +21,9 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
     DEFAULT_TOOL_CALL_PARSER = "hermes"
 
     def get_vllm_args(self, vllm_args: str | None = None) -> str:
+        # Initialize the arguments
         args = shlex.split(vllm_args or "")
+        # Add the default arguments
         if "--enable-auto-tool-choice" not in args:
             args.append("--enable-auto-tool-choice")
         if "--tool-call-parser" not in args:
