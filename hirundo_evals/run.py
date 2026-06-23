@@ -171,7 +171,7 @@ def main(
     )
     # Run the evaluation
     if vllm_local:
-        if framework_wrapper.supports_managed_vllm():
+        if framework_wrapper.SUPPORTS_MANAGED_VLLM:
             # Run the evaluation with a local OpenAI-compatible vLLM server
             asyncio.run(
                 run_with_vllm(framework_wrapper, vllm_args, vllm_devices, ctx.args)

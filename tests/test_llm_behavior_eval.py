@@ -22,7 +22,7 @@ def test_llm_behavior_eval_command_forwards_behavior_and_output_dir() -> None:
 def test_llm_behavior_eval_uses_native_vllm_args() -> None:
     wrapper = LLMBehaviorEvalWrapper("model", ["hallu"], "raw-logs")
 
-    assert wrapper.supports_managed_vllm() is False
+    assert wrapper.SUPPORTS_MANAGED_VLLM is False
     assert wrapper.get_framework_vllm_args(["--max-samples", "1"]) == [
         "--max-samples",
         "1",

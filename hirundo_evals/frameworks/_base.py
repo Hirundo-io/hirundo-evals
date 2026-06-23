@@ -25,7 +25,10 @@ class BaseEvalFrameworkWrapper(ABC):
     Args:
         model: The model to evaluate.
         tasks: The tasks/benchmarks to evaluate.
+        log_dir: The directory to store the logs.
     """
+
+    SUPPORTS_MANAGED_VLLM = True
 
     def __init__(self, model: str, tasks: list[str], log_dir: str):
         self.model = model
@@ -80,12 +83,6 @@ class BaseEvalFrameworkWrapper(ABC):
             The framework-specific vLLM server arguments.
         """
         return vllm_args
-
-    def supports_managed_vllm(self) -> bool:
-        """
-        Whether this framework can use Hirundo Evals' managed OpenAI-compatible vLLM server.
-        """
-        return True
 
     def get_framework_vllm_args(self, extra: list[str] | None = None) -> list[str]:
         """

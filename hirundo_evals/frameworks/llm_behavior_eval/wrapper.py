@@ -9,15 +9,17 @@ class LLMBehaviorEvalWrapper(BaseEvalFrameworkWrapper):
     Wrapper for Hirundo's llm-behavior-eval CLI.
     """
 
-    FRAMEWORK_NAME = "llm-behavior-eval"
-
-    def supports_managed_vllm(self) -> bool:
-        return False
+    SUPPORTS_MANAGED_VLLM = False
 
     def get_framework_vllm_args(self, extra: list[str] | None = None) -> list[str]:
         args = list(extra or [])
-        if "--inference-engine" not in args and "--model-engine" not in args:
-            args.extend(["--model-engine", "vllm"])
+        if (
+            "--inference-engine" not in args
+            and "--model-engine" not in args
+            and "--judge-engine" not in args
+        ):
+            args.extend(["--inference-engine", "vllm"])
+
         return args
 
     def get_cli_cmd(
@@ -35,6 +37,7 @@ class LLMBehaviorEvalWrapper(BaseEvalFrameworkWrapper):
         ]
         if extra:
             cmd.extend(extra)
+
         return cmd
 
     def prepare_results(self) -> list[OutputEntry]:
@@ -57,7 +60,7 @@ class LLMBehaviorEvalWrapper(BaseEvalFrameworkWrapper):
                             OutputEntry(
                                 {
                                     "Run ID": run_id,
-                                    "Framework": self.FRAMEWORK_NAME,
+                                    "Framework": "llm-behavior-eval",
                                     "Benchmark": benchmark,
                                     "Metric": metric_name,
                                     "Score": score,
@@ -65,6 +68,7 @@ class LLMBehaviorEvalWrapper(BaseEvalFrameworkWrapper):
                                 }
                             )
                         )
+
         return results
 
     @staticmethod
