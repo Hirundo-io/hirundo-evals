@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-from ._base import BaseEvalFrameworkWrapper, OutputEntry
+from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
 
 
 class LLMBehaviorEvalWrapper(BaseEvalFrameworkWrapper):

@@ -1,4 +1,4 @@
-from hirundo_evals.frameworks.llm_behavior_eval import LLMBehaviorEvalWrapper
+from hirundo_evals.frameworks.llm_behavior_eval.wrapper import LLMBehaviorEvalWrapper
 
 
 def test_llm_behavior_eval_command_forwards_behavior_and_output_dir() -> None:

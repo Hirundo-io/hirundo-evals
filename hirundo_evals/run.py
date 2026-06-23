@@ -3,56 +3,20 @@ import asyncio
 import logging
 import os
 from datetime import datetime
-from enum import Enum
 from pathlib import Path
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 import typer
 
-from .frameworks._base import BaseEvalFrameworkWrapper
+from .frameworks.registry import EvalFramework, get_eval_framework_wrapper
 from .vllm_server import serve_vllm
 
+if TYPE_CHECKING:
+    from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper
+
 app = typer.Typer(
-    help="Hirundo Evals: A wrapper around inspect-ai and other eval frameworks."
+    help="Hirundo Evals: A CLI for running LLM evaluations through framework adapters."
 )
-
-
-class EvalFramework(str, Enum):
-    INSPECT = "inspect-ai"
-    LLM_BEHAVIOR_EVAL = "llm-behavior-eval"
-    PINCHBENCH = "pinchbench"
-
-
-def _get_eval_framework_wrapper(
-    framework: EvalFramework, model: str, tasks: list[str], log_dir: str
-) -> BaseEvalFrameworkWrapper:
-    """
-    Get the evaluation framework wrapper for the given framework.
-
-    Args:
-        framework: The evaluation framework to get the wrapper for.
-        model: The model to evaluate.
-        tasks: The tasks/benchmarks to evaluate.
-
-    Returns:
-        The evaluation framework wrapper.
-    """
-    if framework == EvalFramework.INSPECT:
-        from .frameworks.inspect_ai import InspectWrapper
-
-        wrapper = InspectWrapper
-    elif framework == EvalFramework.LLM_BEHAVIOR_EVAL:
-        from .frameworks.llm_behavior_eval import LLMBehaviorEvalWrapper
-
-        wrapper = LLMBehaviorEvalWrapper
-    elif framework == EvalFramework.PINCHBENCH:
-        from .frameworks.pinchbench import PinchBenchWrapper
-
-        wrapper = PinchBenchWrapper
-    else:
-        raise NotImplementedError(f"Framework '{framework}' is not yet supported.")
-
-    return wrapper(model, tasks, log_dir)
 
 
 def _parse_tasks(tasks: str) -> list[str]:
@@ -80,7 +44,7 @@ def _parse_tasks(tasks: str) -> list[str]:
 
 
 async def run_with_vllm(
-    framework_wrapper: BaseEvalFrameworkWrapper,
+    framework_wrapper: "BaseEvalFrameworkWrapper",
     vllm_args: str | None,
     vllm_devices: str | None,
     framework_args: list[str] | None = None,
@@ -197,7 +161,7 @@ def main(
     logging.info(f"📁 Log Directory: {log_dir}")
     logging.info(f"📊 CSV Output: {Path(output_dir) / 'results.csv'}")
     # Get the evaluation framework wrapper
-    framework_wrapper = _get_eval_framework_wrapper(
+    framework_wrapper = get_eval_framework_wrapper(
         framework, model, parsed_tasks, log_dir
     )
     # Run the evaluation
