@@ -1,4 +1,4 @@
-from hirundo_evals.frameworks.inspect_ai import InspectWrapper
+from hirundo_evals.frameworks.inspect_ai.wrapper import InspectWrapper
 
 
 def test_inspect_command_maps_aliases_and_prefixes_hf_models() -> None:
