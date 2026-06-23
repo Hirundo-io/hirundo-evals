@@ -2,11 +2,27 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import TypedDict
 
 from bidict import bidict
 from inspect_ai.log import EvalLog
 
 from ._base import BaseEvalFrameworkWrapper, OutputEntry
+
+
+class InspectScore(TypedDict):
+    """
+    Score definition for inspect-ai.
+
+    Args:
+        name: The name of the score metric in the inspect-ai logs.
+        is_percentage: Whether the score is a percentage.
+        is_higher_better: Whether a higher value is better.
+    """
+
+    name: str
+    is_percentage: bool
+    is_higher_better: bool
 
 
 class InspectWrapper(BaseEvalFrameworkWrapper):
@@ -29,14 +45,37 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         }
     )
 
-    FINAL_METRIC_BY_BENCHMARK = {
-        "aime25": "accuracy",
-        "gpqa": "accuracy",
-        "ifeval": "final_acc",
-        "ifbench": "final_acc",
-        "livecodebench": "accuracy",
-        "mmlu-pro": "accuracy",
-        "scicode": "percentage_main_problems_solved",
+    FINAL_METRICS_BY_BENCHMARK = {
+        "aime25": [
+            InspectScore(name="accuracy", is_percentage=True, is_higher_better=True)
+        ],
+        "gpqa": [
+            InspectScore(name="accuracy", is_percentage=True, is_higher_better=True)
+        ],
+        "ifeval": [
+            InspectScore(name="final_acc", is_percentage=True, is_higher_better=True)
+        ],
+        "ifbench": [
+            InspectScore(name="final_acc", is_percentage=True, is_higher_better=True)
+        ],
+        "livecodebench": [
+            InspectScore(name="accuracy", is_percentage=True, is_higher_better=True)
+        ],
+        "mmlu-pro": [
+            InspectScore(name="accuracy", is_percentage=True, is_higher_better=True)
+        ],
+        "scicode": [
+            InspectScore(
+                name="percentage_main_problems_solved",
+                is_percentage=True,
+                is_higher_better=True,
+            ),
+            InspectScore(
+                name="percentage_subproblems_solved",
+                is_percentage=True,
+                is_higher_better=True,
+            ),
+        ],
     }
 
     @staticmethod
@@ -165,12 +204,8 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         for log in logs:
             task_name = log.eval.task
             alias = InspectWrapper.TASK_TO_BENCHMARK.inv.get(task_name, task_name)
-            target_metric = InspectWrapper.FINAL_METRIC_BY_BENCHMARK.get(
-                alias, "unknown_metric"
-            )
+            target_metrics = InspectWrapper.FINAL_METRICS_BY_BENCHMARK.get(alias)
             status = log.status
-            score_value = "N/A"
-            runtime = "N/A"
             # Extract runtime from log.stats if available
             if (
                 log.stats
@@ -180,34 +215,62 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
                 runtime = self._get_runtime_from_timestamps(
                     log.stats.started_at, log.stats.completed_at
                 )
-            # If the task completed successfully, extract the targeted metric
+            else:
+                runtime = "N/A"
+            # Initialize the scores
+            score_values: dict[str, float | str] = {}
+            # If the task completed successfully, extract the targeted metrics
+            # Otherwise, fill the score_values with the status
             if status == "success" and log.results and log.results.scores:
                 # inspect_ai stores metrics inside score objects
-                for score in log.results.scores:
-                    if target_metric in score.metrics:
-                        score_value = score.metrics[target_metric].value * 100.0
-                        break
-                # Fallback if the expected metric name wasn't found in the results
-                if score_value == "N/A":
-                    score_value = f"Metric '{target_metric}' not found"
+                if not target_metrics:
+                    add_scorer_prefix = len(log.results.scores) > 1
+                    for score in log.results.scores:
+                        for metric_name, metric in score.metrics.items():
+                            if add_scorer_prefix:
+                                metric_name = f"{score.name}: {metric_name}"
+                            score_values[metric_name] = metric.value * 100.0
+                else:
+                    for target_metric in target_metrics:
+                        for score in log.results.scores:
+                            if target_metric["name"] in score.metrics:
+                                metric_name = target_metric["name"]
+                                metric_value = score.metrics[metric_name].value
+                                if target_metric["is_percentage"]:
+                                    metric_value *= 100.0
+                                    metric_name += " (%)"
+                                if target_metric["is_higher_better"]:
+                                    metric_name += " ⬆️"
+                                else:
+                                    metric_name += " ⬇️"
+                                score_values[metric_name] = metric_value
+                                break
+                        else:
+                            # Fallback if the expected metric name wasn't found in the results
+                            score_values[target_metric["name"]] = (
+                                f"Metric '{target_metric['name']}' not found"
+                            )
             elif status != "success":
-                score_value = f"Failed ({status})"
+                if not target_metrics:
+                    score_values["status"] = f"Failed ({status})"
+                else:
+                    for target_metric in target_metrics:
+                        score_values[target_metric["name"]] = f"Failed ({status})"
             # Add the data to the CSV data
-            results.append(
-                OutputEntry(
-                    {
-                        "Run ID": run_id,
-                        "Framework": "inspect-ai",
-                        "Benchmark": alias,
-                        "Metric": target_metric + " (%) ⬆️",
-                        "Score": score_value,
-                        "Runtime (sec)": runtime,
-                    }
+            for score_name, score_value in score_values.items():
+                results.append(
+                    OutputEntry(
+                        {
+                            "Run ID": run_id,
+                            "Framework": "inspect-ai",
+                            "Benchmark": alias,
+                            "Metric": score_name,
+                            "Score": score_value,
+                            "Runtime (sec)": runtime,
+                        }
+                    )
                 )
-            )
             # Log the results
-            logging.info(
-                f"Task: {alias} | Status: {status} | {target_metric}: {score_value} | Runtime: {runtime}"
-            )
+            logging.info(f"Task: {alias} | Status: {status} | Runtime: {runtime}")
 
         return results
