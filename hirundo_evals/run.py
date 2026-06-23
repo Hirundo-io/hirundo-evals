@@ -3,13 +3,15 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 import typer
 
-from .frameworks._base import BaseEvalFrameworkWrapper
 from .frameworks.registry import EvalFramework, get_eval_framework_wrapper
 from .vllm_server import serve_vllm
+
+if TYPE_CHECKING:
+    from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper
 
 app = typer.Typer(
     help="Hirundo Evals: A CLI for running LLM evaluations through framework adapters."
@@ -41,7 +43,7 @@ def _parse_tasks(tasks: str) -> list[str]:
 
 
 async def run_with_vllm(
-    framework_wrapper: BaseEvalFrameworkWrapper,
+    framework_wrapper: "BaseEvalFrameworkWrapper",
     vllm_args: str | None,
     vllm_devices: str | None,
     framework_args: list[str] | None = None,
