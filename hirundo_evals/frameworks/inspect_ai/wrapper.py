@@ -7,7 +7,7 @@ from typing import TypedDict
 from bidict import bidict
 from inspect_ai.log import EvalLog
 
-from ._base import BaseEvalFrameworkWrapper, OutputEntry
+from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
 
 
 class InspectScore(TypedDict):
@@ -42,6 +42,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             "livecodebench": "inspect_evals/livecodebench_pro",
             "mmlu-pro": "inspect_evals/mmlu_pro",
             "scicode": "inspect_evals/scicode",
+            "xstest": "inspect_evals/xstest",
         }
     )
 
@@ -53,9 +54,6 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             InspectScore(name="accuracy", is_percentage=True, is_higher_better=True)
         ],
         "ifeval": [
-            InspectScore(name="final_acc", is_percentage=True, is_higher_better=True)
-        ],
-        "ifbench": [
             InspectScore(name="final_acc", is_percentage=True, is_higher_better=True)
         ],
         "livecodebench": [
@@ -221,7 +219,13 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             score_values: dict[str, float | str] = {}
             # If the task completed successfully, extract the targeted metrics
             # Otherwise, fill the score_values with the status
-            if status == "success" and log.results and log.results.scores:
+            if status != "success":
+                if not target_metrics:
+                    score_values["status"] = f"Failed ({status})"
+                else:
+                    for target_metric in target_metrics:
+                        score_values[target_metric["name"]] = f"Failed ({status})"
+            elif log.results and log.results.scores:
                 # inspect_ai stores metrics inside score objects
                 if not target_metrics:
                     add_scorer_prefix = len(log.results.scores) > 1
@@ -229,7 +233,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
                         for metric_name, metric in score.metrics.items():
                             if add_scorer_prefix:
                                 metric_name = f"{score.name}: {metric_name}"
-                            score_values[metric_name] = metric.value * 100.0
+                            score_values[metric_name] = metric.value
                 else:
                     for target_metric in target_metrics:
                         for score in log.results.scores:
@@ -250,12 +254,6 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
                             score_values[target_metric["name"]] = (
                                 f"Metric '{target_metric['name']}' not found"
                             )
-            elif status != "success":
-                if not target_metrics:
-                    score_values["status"] = f"Failed ({status})"
-                else:
-                    for target_metric in target_metrics:
-                        score_values[target_metric["name"]] = f"Failed ({status})"
             # Add the data to the CSV data
             for score_name, score_value in score_values.items():
                 results.append(

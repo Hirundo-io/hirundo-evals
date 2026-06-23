@@ -12,7 +12,7 @@ from .frameworks._base import BaseEvalFrameworkWrapper
 from .vllm_server import serve_vllm
 
 app = typer.Typer(
-    help="Hirundo Evals: A wrapper around inspect-ai and other eval frameworks."
+    help="Hirundo Evals: A CLI for running LLM evaluations through framework adapters."
 )
 
 
@@ -36,7 +36,7 @@ def _get_eval_framework_wrapper(
         The evaluation framework wrapper.
     """
     if framework == EvalFramework.INSPECT:
-        from .frameworks.inspect_ai import InspectWrapper
+        from .frameworks.inspect_ai.wrapper import InspectWrapper
 
         wrapper = InspectWrapper
     elif framework == EvalFramework.PINCHBENCH:
@@ -44,7 +44,10 @@ def _get_eval_framework_wrapper(
 
         wrapper = PinchBenchWrapper
     else:
-        raise NotImplementedError(f"Framework '{framework}' is not yet supported.")
+        raise NotImplementedError(
+            f"Framework '{framework}' is not yet supported. "
+            f"Currently supported frameworks: {', '.join(e.value for e in EvalFramework)}"
+        )
 
     return wrapper(model, tasks, log_dir)
 

@@ -111,17 +111,21 @@ class BaseEvalFrameworkWrapper(ABC):
         results = [self._format_output_row(row) for row in self.prepare_results()]
         fieldnames = list(get_type_hints(OutputEntry).keys())
         try:
+            existing_fieldnames: list[str] = []
             existing_rows: list[dict[str, str]] = []
             should_write_header = True
             # Get existing rows and fieldnames if the file exists
             if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
                 with open(output_path, newline="", encoding="utf-8") as f:
                     reader = csv.DictReader(f)
-                    existing_fieldnames = reader.fieldnames or []
+                    existing_fieldnames = list(reader.fieldnames or [])
                     existing_rows = list(reader)
                 should_write_header = existing_fieldnames != fieldnames
             # Rewrite an existing file if the header has changed
             if should_write_header and existing_rows:
+                # Get the ordered union of the new and existing fieldnames
+                # (this is the most efficient way to do this)
+                fieldnames = list(dict.fromkeys(fieldnames + existing_fieldnames))
                 with open(output_path, mode="w", newline="", encoding="utf-8") as f:
                     writer = csv.DictWriter(f, fieldnames=fieldnames)
                     writer.writeheader()
