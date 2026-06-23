@@ -2,7 +2,7 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper
+    from ._base import BaseEvalFrameworkWrapper
 
 
 class EvalFramework(str, Enum):
