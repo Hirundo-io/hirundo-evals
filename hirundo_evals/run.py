@@ -146,15 +146,17 @@ def main(
     # Validate the framework
     try:
         framework = EvalFramework(framework)
-    except Exception as e:
-        raise NotImplementedError(
+    except ValueError:
+        raise typer.BadParameter(
             f"Framework '{framework}' is not supported. "
             f"Currently supported frameworks: {', '.join(e.value for e in EvalFramework)}"
-        ) from e
+        ) from None
     # Parse the tasks
     parsed_tasks = _parse_tasks(tasks)
     # Create the output directories
-    output_dir = str(Path(output_dir) / model)
+    output_dir = str(
+        Path(output_dir) / "/".join(os.path.abspath(model).rsplit("/", 2)[-2:])
+    )
     log_dir = str(Path(output_dir) / datetime.now().strftime("%Y%m%d_%H%M%S"))
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(log_dir, exist_ok=True)

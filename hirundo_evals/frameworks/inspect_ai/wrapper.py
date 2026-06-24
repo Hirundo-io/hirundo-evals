@@ -18,11 +18,13 @@ class InspectScore(TypedDict):
         name: The name of the score metric in the inspect-ai logs.
         is_percentage: Whether the score is a percentage.
         is_higher_better: Whether a higher value is better.
+        is_normalized: Whether the score is normalized. Relevant only for percentage scores.
     """
 
     name: str
     is_percentage: bool
     is_higher_better: bool
+    is_normalized: bool
 
 
 class InspectWrapper(BaseEvalFrameworkWrapper):
@@ -48,30 +50,57 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
 
     FINAL_METRICS_BY_BENCHMARK = {
         "aime25": [
-            InspectScore(name="accuracy", is_percentage=True, is_higher_better=True)
+            InspectScore(
+                name="accuracy",
+                is_percentage=True,
+                is_higher_better=True,
+                is_normalized=True,
+            )
         ],
         "gpqa": [
-            InspectScore(name="accuracy", is_percentage=True, is_higher_better=True)
+            InspectScore(
+                name="accuracy",
+                is_percentage=True,
+                is_higher_better=True,
+                is_normalized=True,
+            )
         ],
         "ifeval": [
-            InspectScore(name="final_acc", is_percentage=True, is_higher_better=True)
+            InspectScore(
+                name="final_acc",
+                is_percentage=True,
+                is_higher_better=True,
+                is_normalized=True,
+            )
         ],
         "livecodebench": [
-            InspectScore(name="accuracy", is_percentage=True, is_higher_better=True)
+            InspectScore(
+                name="accuracy",
+                is_percentage=True,
+                is_higher_better=True,
+                is_normalized=True,
+            )
         ],
         "mmlu-pro": [
-            InspectScore(name="accuracy", is_percentage=True, is_higher_better=True)
+            InspectScore(
+                name="accuracy",
+                is_percentage=True,
+                is_higher_better=True,
+                is_normalized=True,
+            )
         ],
         "scicode": [
             InspectScore(
                 name="percentage_main_problems_solved",
                 is_percentage=True,
                 is_higher_better=True,
+                is_normalized=False,
             ),
             InspectScore(
                 name="percentage_subproblems_solved",
                 is_percentage=True,
                 is_higher_better=True,
+                is_normalized=False,
             ),
         ],
     }
@@ -241,7 +270,8 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
                                 metric_name = target_metric["name"]
                                 metric_value = score.metrics[metric_name].value
                                 if target_metric["is_percentage"]:
-                                    metric_value *= 100.0
+                                    if target_metric["is_normalized"]:
+                                        metric_value *= 100.0
                                     metric_name += " (%)"
                                 if target_metric["is_higher_better"]:
                                     metric_name += " ⬆️"
