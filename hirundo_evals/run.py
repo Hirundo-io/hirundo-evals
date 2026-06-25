@@ -179,6 +179,12 @@ def main(
     framework_wrapper = get_eval_framework_wrapper(
         framework, model, parsed_tasks, log_dir
     )
+    if not framework_wrapper.SUPPORTS_UNSERVED_MODELS and not vllm_local:
+        logging.warning(
+            "The framework does not support unserved models, but --vllm-local is not specified. "
+            "Running with a local vLLM server..."
+        )
+        vllm_local = True
     # Run the evaluation
     if vllm_local:
         # Run the evaluation with a local vLLM server

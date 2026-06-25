@@ -35,6 +35,11 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         model: The model to evaluate.
         tasks: The tasks/benchmarks to evaluate.
         log_dir: The directory in which to save the outputs.
+
+    Class Attributes:
+        TASK_GROUPS: Task group aliases to individual tasks mapping.
+        TASK_TO_BENCHMARK: Task aliases to supported benchmark names mapping.
+        FINAL_METRICS_BY_BENCHMARK: Final metrics to extract for each benchmark.
     """
 
     TASK_GROUPS = {

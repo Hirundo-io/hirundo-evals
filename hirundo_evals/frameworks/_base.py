@@ -14,7 +14,7 @@ OutputEntry = TypedDict(
         "Benchmark": str,
         "Metric": str,
         "Score": float | str,
-        "Runtime (sec)": int | str,
+        "Runtime (sec)": float | str,
     },
 )
 
@@ -27,7 +27,13 @@ class BaseEvalFrameworkWrapper(ABC):
         model: The model to evaluate.
         tasks: The tasks/benchmarks to evaluate.
         log_dir: The directory in which to save the outputs.
+
+    Class Attributes:
+        SUPPORTS_UNSERVED_MODELS: Whether the framework supports unserved models.
+
     """
+
+    SUPPORTS_UNSERVED_MODELS = True
 
     def __init__(self, model: str, tasks: list[str], log_dir: str | Path):
         self.model = model
