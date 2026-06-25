@@ -99,8 +99,8 @@ def run_with_vllm(
             # Let frameworks with native vLLM support configure their own backend.
             if vllm_args:
                 logging.warning(
-                    f"❌ Discarding unsupported vLLM arguments: {vllm_args}.\n"
-                    f"If any of these arguments are supported by the framework, pass them directly instead of using --vllm-args."
+                    f"❌ Discarding unsupported vLLM arguments: {vllm_args}. "
+                    f"Any arguments supported by the framework should be passed directly, not through --vllm-args."
                 )
             framework_wrapper.run(
                 extra=framework_wrapper.get_framework_vllm_args(framework_args)
