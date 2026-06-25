@@ -68,6 +68,6 @@ def test_pinchbench_prepare_results_reads_per_task_scores(tmp_path) -> None:
             "Benchmark": "task_calendar",
             "Metric": "overall_score (%) ⬆️",
             "Score": 83.33333333,
-            "Runtime (sec)": 6,
+            "Runtime (sec)": 6.3,
         }
     ]

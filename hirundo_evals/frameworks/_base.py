@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import TypedDict, get_type_hints
 
 OutputEntry = TypedDict(
@@ -13,7 +14,7 @@ OutputEntry = TypedDict(
         "Benchmark": str,
         "Metric": str,
         "Score": float | str,
-        "Runtime (sec)": int | str,
+        "Runtime (sec)": float | str,
     },
 )
 
@@ -25,15 +26,20 @@ class BaseEvalFrameworkWrapper(ABC):
     Args:
         model: The model to evaluate.
         tasks: The tasks/benchmarks to evaluate.
-        log_dir: The directory to store the logs.
+        log_dir: The directory in which to save the outputs.
+
+    Class Attributes:
+        SUPPORTS_UNSERVED_MODELS: Whether the framework supports unserved models.
+        SUPPORTS_MANAGED_VLLM: Whether the framework supports managed vLLM.
     """
 
+    SUPPORTS_UNSERVED_MODELS = True
     SUPPORTS_MANAGED_VLLM = True
 
-    def __init__(self, model: str, tasks: list[str], log_dir: str):
+    def __init__(self, model: str, tasks: list[str], log_dir: str | Path):
         self.model = model
         self.tasks = tasks
-        self.log_dir = log_dir
+        self.log_dir = str(log_dir)
 
     @abstractmethod
     def get_cli_cmd(
@@ -75,6 +81,7 @@ class BaseEvalFrameworkWrapper(ABC):
     def get_vllm_args(self, vllm_args: str | None = None) -> str | None:
         """
         Return framework-specific vLLM server arguments.
+        Used to add required framework-specific arguments to the vLLM server.
 
         Args:
             vllm_args: Extra arguments to pass to the vLLM server.

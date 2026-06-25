@@ -34,8 +34,24 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
     Args:
         model: The model to evaluate.
         tasks: The tasks/benchmarks to evaluate.
+        log_dir: The directory in which to save the outputs.
+
+    Class Attributes:
+        TASK_GROUPS: Task group aliases to individual tasks mapping.
+        TASK_TO_BENCHMARK: Task aliases to supported benchmark names mapping.
+        FINAL_METRICS_BY_BENCHMARK: Final metrics to extract for each benchmark.
     """
 
+    TASK_GROUPS = {
+        "nemo-skills": [
+            "aime25",
+            "gpqa_diamond",
+            "ifeval",
+            "livecodebench_pro",
+            "mmlu_pro",
+            "scicode",
+        ],
+    }
     TASK_TO_BENCHMARK = bidict(
         {
             "aime25": "inspect_evals/aime2025",
@@ -47,7 +63,6 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             "xstest": "inspect_evals/xstest",
         }
     )
-
     FINAL_METRICS_BY_BENCHMARK = {
         "aime25": [
             InspectScore(
@@ -118,10 +133,17 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         """
         if not tasks:
             raise ValueError("No tasks provided")
-
+        # Expand any existing task groups into individual tasks
+        expanded_tasks = []
+        for task in tasks:
+            if task in InspectWrapper.TASK_GROUPS:
+                expanded_tasks.extend(InspectWrapper.TASK_GROUPS[task])
+            else:
+                expanded_tasks.append(task)
+        # Convert the individual tasks to the format compatible with inspect-ai
         converted_tasks = []
         unknown_tasks = []
-        for task in tasks:
+        for task in expanded_tasks:
             # If the task is already in the format compatible with inspect-ai, add it to the list
             if task.startswith("inspect_evals/"):
                 converted_tasks.append(task)
