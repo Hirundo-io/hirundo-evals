@@ -28,10 +28,15 @@ def _parse_tasks(tasks: str) -> list[str]:
     Returns:
         The parsed tasks.
     """
-    # Verify that the tasks are provided after the model and framework arguments
-    if tasks.startswith("--"):
+    # Verify that the tasks are provided as an argument (not an option),
+    # and after the model and framework arguments
+    if tasks.startswith("--tasks"):
         raise typer.BadParameter(
-            "Tasks must be provided after the model and framework arguments."
+            "Tasks must be provided as an argument, not an option (i.e. without a leading '--tasks')."
+        )
+    elif tasks.startswith("--"):
+        raise typer.BadParameter(
+            f"Tasks must be provided after the model and framework arguments. Got {tasks} instead."
         )
     # Split the tasks by commas and strip whitespace
     parsed_tasks = [task.strip() for task in tasks.split(",") if task.strip()]
