@@ -155,7 +155,12 @@ def main(
     parsed_tasks = _parse_tasks(tasks)
     # Create the output directories
     output_dir = str(
-        Path(output_dir) / "/".join(os.path.abspath(model).rsplit("/", 2)[-2:])
+        Path(output_dir)
+        / "/".join(
+            (os.path.abspath(model) if model.startswith(".") else model).rsplit("/", 2)[
+                -2:
+            ]
+        ).removeprefix("/")
     )
     log_dir = str(Path(output_dir) / datetime.now().strftime("%Y%m%d_%H%M%S"))
     os.makedirs(output_dir, exist_ok=True)
