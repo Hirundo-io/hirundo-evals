@@ -43,14 +43,38 @@ def _parse_tasks(tasks: str) -> list[str]:
     return parsed_tasks
 
 
-async def run_with_vllm(
+async def _run_with_managed_vllm(
+    framework_wrapper: "BaseEvalFrameworkWrapper",
+    vllm_args: str | None,
+    framework_args: list[str] | None = None,
+) -> None:
+    """
+    Spins up a local vLLM server and executes the framework against it.
+
+    Args:
+        framework_wrapper: The evaluation framework wrapper.
+        vllm_args: Additional arguments for the vLLM server.
+        framework_args: Extra arguments to pass to the framework.
+    """
+    async with serve_vllm(
+        framework_wrapper.model, framework_wrapper.get_vllm_args(vllm_args)
+    ) as server_url:
+        # Map the model to use the local OpenAI compatible endpoint
+        local_model = f"openai/{framework_wrapper.model}"
+        # Use asyncio.to_thread to run the blocking eval without stopping the event loop
+        await asyncio.to_thread(
+            framework_wrapper.run, local_model, server_url, framework_args
+        )
+
+
+def run_with_vllm(
     framework_wrapper: "BaseEvalFrameworkWrapper",
     vllm_args: str | None,
     vllm_devices: str | None,
     framework_args: list[str] | None = None,
 ) -> None:
     """
-    Spins up a local vLLM server and executes the provided evaluation callback.
+    Run the framework through its vLLM integration.
 
     Args:
         framework_wrapper: The evaluation framework wrapper.
@@ -66,15 +90,16 @@ async def run_with_vllm(
     os.environ.setdefault("OPENAI_API_KEY", "dummy_key")
 
     try:
-        async with serve_vllm(
-            framework_wrapper.model, framework_wrapper.get_vllm_args(vllm_args)
-        ) as server_url:
-            # Map the model to use the local OpenAI compatible endpoint
-            local_model = f"openai/{framework_wrapper.model}"
-            # Use asyncio.to_thread to run the blocking eval without stopping the event loop
-            await asyncio.to_thread(
-                framework_wrapper.run, local_model, server_url, framework_args
+        if not framework_wrapper.SUPPORTS_MANAGED_VLLM:
+            # Let frameworks with native vLLM support configure their own backend.
+            framework_wrapper.run(
+                extra=framework_wrapper.get_framework_vllm_args(framework_args)
             )
+            return
+
+        asyncio.run(
+            _run_with_managed_vllm(framework_wrapper, vllm_args, framework_args)
+        )
     finally:
         if previous_openai_api_key is None:
             os.environ.pop("OPENAI_API_KEY", None)
@@ -178,16 +203,8 @@ def main(
     )
     # Run the evaluation
     if vllm_local:
-        if framework_wrapper.SUPPORTS_MANAGED_VLLM:
-            # Run the evaluation with a local OpenAI-compatible vLLM server
-            asyncio.run(
-                run_with_vllm(framework_wrapper, vllm_args, vllm_devices, ctx.args)
-            )
-        else:
-            # Let frameworks with native vLLM support configure their own backend.
-            framework_wrapper.run(
-                extra=framework_wrapper.get_framework_vllm_args(ctx.args)
-            )
+        # Run the evaluation with the framework's vLLM integration
+        run_with_vllm(framework_wrapper, vllm_args, vllm_devices, ctx.args)
     else:
         # Run the evaluation without a local vLLM server
         framework_wrapper.run(extra=ctx.args)

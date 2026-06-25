@@ -46,13 +46,17 @@ hirundo-evals ibm-granite/granite-4.1-3b llm-behavior-eval hallu \
     --max-samples 1
 ```
 
-If neither `--inference-engine` nor `--model-engine` is already provided, `--vllm-local` adds:
+If neither `--inference-engine`, `--model-engine` nor `--judge-engine` is already provided, `--vllm-local` adds:
 
 ```bash
---model-engine vllm
+--inference-engine vllm
 ```
 
 You can still pass `llm-behavior-eval` vLLM options directly, such as `--vllm-max-model-len`, `--vllm-gpu-memory-utilization`, or `--vllm-enforce-eager`.
+
+> [!IMPORTANT]
+> `llm-behavior-eval` does not support arbitrary vLLM configuration arguments beyond the options exposed by its API.
+> `vllm_args` is disregarded by this framework.
 
 ## Outputs
 
