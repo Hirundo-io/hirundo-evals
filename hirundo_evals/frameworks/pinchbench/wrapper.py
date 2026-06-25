@@ -99,7 +99,7 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
                             "Benchmark": str(task.get("task_id", "unknown_task")),
                             "Metric": "overall_score (%) ⬆️",
                             "Score": float(score) * 100.0,
-                            "Runtime (sec)": int(task.get("execution_time", runtime)),
+                            "Runtime (sec)": task.get("execution_time", runtime),
                         }
                     )
                 )
