@@ -90,16 +90,22 @@ def run_with_vllm(
     os.environ.setdefault("OPENAI_API_KEY", "dummy_key")
 
     try:
-        if not framework_wrapper.SUPPORTS_MANAGED_VLLM:
+        if framework_wrapper.SUPPORTS_MANAGED_VLLM:
+            # Run the evaluation with a local OpenAI-compatible vLLM server
+            asyncio.run(
+                _run_with_managed_vllm(framework_wrapper, vllm_args, framework_args)
+            )
+        else:
             # Let frameworks with native vLLM support configure their own backend.
+            if vllm_args:
+                logging.warning(
+                    f"❌ Discarding unsupported vLLM arguments: {vllm_args}.\n"
+                    f"If any of these arguments are supported by the framework, pass them directly instead of using --vllm-args."
+                )
             framework_wrapper.run(
                 extra=framework_wrapper.get_framework_vllm_args(framework_args)
             )
-            return
 
-        asyncio.run(
-            _run_with_managed_vllm(framework_wrapper, vllm_args, framework_args)
-        )
     finally:
         if previous_openai_api_key is None:
             os.environ.pop("OPENAI_API_KEY", None)
