@@ -34,6 +34,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
     Args:
         model: The model to evaluate.
         tasks: The tasks/benchmarks to evaluate.
+        log_dir: The directory in which to save the outputs.
     """
 
     TASK_TO_BENCHMARK = bidict(

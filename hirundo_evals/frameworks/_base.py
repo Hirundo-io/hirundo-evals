@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import TypedDict, get_type_hints
 
 OutputEntry = TypedDict(
@@ -25,12 +26,13 @@ class BaseEvalFrameworkWrapper(ABC):
     Args:
         model: The model to evaluate.
         tasks: The tasks/benchmarks to evaluate.
+        log_dir: The directory in which to save the outputs.
     """
 
-    def __init__(self, model: str, tasks: list[str], log_dir: str):
+    def __init__(self, model: str, tasks: list[str], log_dir: str | Path):
         self.model = model
         self.tasks = tasks
-        self.log_dir = log_dir
+        self.log_dir = str(log_dir)
 
     @abstractmethod
     def get_cli_cmd(

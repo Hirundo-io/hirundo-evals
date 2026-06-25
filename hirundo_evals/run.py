@@ -104,31 +104,35 @@ def main(
         str,
         typer.Argument(help="Comma-separated evaluation task/benchmark names to run"),
     ],
-    output_dir: str = typer.Option(
-        "logs",
-        "--output-dir",
-        "--output_dir",
-        help="Directory for framework raw outputs/logs and summary CSV",
-    ),
-    vllm_local: bool = typer.Option(
-        False,
-        "--vllm-local/--no-vllm-local",
-        "--vllm_local/--no_vllm_local",
-        help="Run a local vLLM server via asyncio",
-    ),
-    vllm_args: str | None = typer.Option(
-        None,
-        "--vllm-args",
-        "--vllm_args",
-        help="Additional arguments for vLLM server (e.g. '--tensor-parallel-size 2')",
-    ),
-    vllm_devices: str | None = typer.Option(
-        None,
-        "--vllm-devices",
-        "--vllm_devices",
-        help="Comma-separated CUDA device IDs for local vLLM server (e.g. '0' or '0,1')",
-    ),
-):
+    output_dir: Annotated[
+        Path,
+        typer.Option(
+            "--output-dir",
+            help="Directory for framework raw outputs/logs and summary CSV",
+        ),
+    ] = Path("logs"),
+    vllm_local: Annotated[
+        bool,
+        typer.Option(
+            "--vllm_local/--no_vllm_local",
+            help="Run a local vLLM server via asyncio",
+        ),
+    ] = False,
+    vllm_args: Annotated[
+        str | None,
+        typer.Option(
+            "--vllm_args",
+            help="Additional arguments for vLLM server (e.g. '--tensor-parallel-size 2')",
+        ),
+    ] = None,
+    vllm_devices: Annotated[
+        str | None,
+        typer.Option(
+            "--vllm-devices",
+            help="Comma-separated CUDA device IDs for local vLLM server (e.g. '0' or '0,1')",
+        ),
+    ] = None,
+) -> None:
     """
     Evaluate tasks, optionally spinning up a local vLLM server.
 
@@ -152,15 +156,10 @@ def main(
     # Parse the tasks
     parsed_tasks = _parse_tasks(tasks)
     # Create the output directories
-    output_dir = str(
-        Path(output_dir)
-        / "/".join(
-            (os.path.abspath(model) if model.startswith(".") else model).rsplit("/", 2)[
-                -2:
-            ]
-        ).removeprefix("/")
+    output_dir = output_dir / Path(
+        *Path(os.path.abspath(model) if model.startswith(".") else model).parts[-2:]
     )
-    log_dir = str(Path(output_dir) / datetime.now().strftime("%Y%m%d_%H%M%S"))
+    log_dir = output_dir / datetime.now().strftime("%Y%m%d_%H%M%S")
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(log_dir, exist_ok=True)
     logging.info(
@@ -168,7 +167,7 @@ def main(
     )
     logging.info(f"🧠 Model: {model}")
     logging.info(f"📁 Log Directory: {log_dir}")
-    logging.info(f"📊 CSV Output: {Path(output_dir) / 'results.csv'}")
+    logging.info(f"📊 CSV Output: {output_dir / 'results.csv'}")
     # Get the evaluation framework wrapper
     framework_wrapper = get_eval_framework_wrapper(
         framework, model, parsed_tasks, log_dir
