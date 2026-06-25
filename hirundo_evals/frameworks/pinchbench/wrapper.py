@@ -46,6 +46,15 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
         return shlex.join(args)
 
     @staticmethod
+    def _require_tool(command: str, install_hint: str) -> str:
+        if shutil.which(command) is None:
+            raise RuntimeError(
+                f"`{command}` is required for PinchBench. {install_hint}"
+            )
+
+        return command
+
+    @staticmethod
     def _pinchbench_model_name(model: str) -> str:
         return model.removeprefix("openai/").removeprefix("vllm/")
 
@@ -71,15 +80,6 @@ class PinchBenchWrapper(BaseEvalFrameworkWrapper):
             str(Path(self.log_dir).resolve()),
             *(extra or []),
         ]
-
-    @staticmethod
-    def _require_tool(command: str, install_hint: str) -> str:
-        if shutil.which(command) is None:
-            raise RuntimeError(
-                f"`{command}` is required for PinchBench. {install_hint}"
-            )
-
-        return command
 
     def _ensure_skill_repo(self) -> str:
         skill_dir = os.path.join(self.log_dir, "pinchbench-skill")
