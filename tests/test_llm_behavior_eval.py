@@ -26,7 +26,7 @@ def test_llm_behavior_eval_uses_native_vllm_args() -> None:
     assert wrapper.get_framework_vllm_args(["--max-samples", "1"]) == [
         "--max-samples",
         "1",
-        "--model-engine",
+        "--inference-engine",
         "vllm",
     ]
     assert wrapper.get_framework_vllm_args(["--inference-engine", "vllm"]) == [
