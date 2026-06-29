@@ -51,6 +51,7 @@ async def run_with_vllm(
     framework_wrapper: "BaseEvalFrameworkWrapper",
     vllm_args: str | None,
     vllm_devices: str | None,
+    vllm_port: int,
     framework_args: list[str] | None = None,
 ) -> None:
     """
@@ -60,6 +61,7 @@ async def run_with_vllm(
         framework_wrapper: The evaluation framework wrapper.
         vllm_args: Additional arguments for the vLLM server.
         vllm_devices: Comma-separated CUDA device IDs for local vLLM server (e.g. '0' or '0,1').
+        vllm_port: Port for the local vLLM server.
         framework_args: Extra arguments to pass to the framework.
     """
     previous_cuda_visible_devices = os.environ.get("CUDA_VISIBLE_DEVICES")
@@ -70,7 +72,9 @@ async def run_with_vllm(
     os.environ.setdefault("OPENAI_API_KEY", "dummy_key")
 
     try:
-        async with serve_vllm(framework_wrapper.model, vllm_args) as server_url:
+        async with serve_vllm(
+            framework_wrapper.model, vllm_args, port=vllm_port
+        ) as server_url:
             # Map the model to use the local OpenAI compatible endpoint
             local_model = f"openai/{framework_wrapper.model}"
             # Use asyncio.to_thread to run the blocking eval without stopping the event loop
@@ -119,14 +123,14 @@ def main(
     vllm_local: Annotated[
         bool,
         typer.Option(
-            "--vllm_local/--no_vllm_local",
+            "--vllm-local/--no-vllm-local",
             help="Run a local vLLM server via asyncio",
         ),
     ] = False,
     vllm_args: Annotated[
         str | None,
         typer.Option(
-            "--vllm_args",
+            "--vllm-args",
             help="Additional arguments for vLLM server (e.g. '--tensor-parallel-size 2')",
         ),
     ] = None,
@@ -137,6 +141,15 @@ def main(
             help="Comma-separated CUDA device IDs for local vLLM server (e.g. '0' or '0,1')",
         ),
     ] = None,
+    vllm_port: Annotated[
+        int,
+        typer.Option(
+            "--vllm-port",
+            min=1,
+            max=65535,
+            help="Port for the local vLLM OpenAI-compatible server.",
+        ),
+    ] = 8000,
 ) -> None:
     """
     Evaluate tasks, optionally spinning up a local vLLM server.
@@ -180,7 +193,11 @@ def main(
     # Run the evaluation
     if vllm_local:
         # Run the evaluation with a local vLLM server
-        asyncio.run(run_with_vllm(framework_wrapper, vllm_args, vllm_devices, ctx.args))
+        asyncio.run(
+            run_with_vllm(
+                framework_wrapper, vllm_args, vllm_devices, vllm_port, ctx.args
+            )
+        )
     else:
         # Run the evaluation without a local vLLM server
         framework_wrapper.run(extra=ctx.args)

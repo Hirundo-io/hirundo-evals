@@ -117,7 +117,7 @@ class BaseEvalFrameworkWrapper(ABC):
                 # (this is the most efficient way to do this)
                 fieldnames = list(dict.fromkeys(fieldnames + existing_fieldnames))
                 with open(output_path, mode="w", newline="", encoding="utf-8") as f:
-                    writer = csv.DictWriter(f, fieldnames=fieldnames)
+                    writer = csv.DictWriter(f, fieldnames=fieldnames, restval="N/A")
                     writer.writeheader()
                     writer.writerows(
                         {

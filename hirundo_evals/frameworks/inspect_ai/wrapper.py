@@ -194,6 +194,8 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             self._inspect_model_name(model or self.model),
             "--log-dir",
             self.log_dir,
+            "--log-format",
+            "json",
         ]
         if model_base_url:
             cmd.extend(["--model-base-url", model_base_url])
