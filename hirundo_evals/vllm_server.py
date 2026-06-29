@@ -2,7 +2,9 @@ import asyncio
 import contextlib
 import http.client
 import logging
+import os
 import shlex
+import signal
 import sys
 import time
 import urllib.parse
@@ -27,6 +29,28 @@ def _is_server_ready(url: str) -> bool:
             conn.close()
     except Exception:
         return False
+
+
+async def _terminate_process_group(
+    process: asyncio.subprocess.Process, timeout: int = 30
+) -> None:
+    if process.returncode is not None:
+        return
+
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        return
+
+    try:
+        await asyncio.wait_for(process.wait(), timeout=timeout)
+    except TimeoutError:
+        logging.warning("vLLM server ignored SIGTERM; killing process group...")
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            return
+        await process.wait()
 
 
 @contextlib.asynccontextmanager
@@ -54,28 +78,37 @@ async def serve_vllm(
     if vllm_args:
         cmd.extend(shlex.split(vllm_args))
 
+    server_url = f"http://localhost:{port}/v1"
+    if await asyncio.to_thread(_is_server_ready, f"{server_url}/models"):
+        raise RuntimeError(
+            f"vLLM server endpoint is already responding on port {port}; "
+            "choose a different --vllm-port or stop the existing server."
+        )
+
     # Inherit stdout/stderr so vLLM startup and runtime logs are visible.
     process = await asyncio.create_subprocess_exec(
         *cmd,
+        start_new_session=True,
     )
-
-    server_url = f"http://localhost:{port}/v1"
 
     # Poll for server readiness
     start_time = time.monotonic()
     while time.monotonic() - start_time < timeout:
+        if process.returncode is not None:
+            raise RuntimeError(
+                f"vLLM server process exited before becoming ready "
+                f"(exit code {process.returncode})"
+            )
         if await asyncio.to_thread(_is_server_ready, f"{server_url}/models"):
             break
         await asyncio.sleep(1)
     else:
-        process.terminate()
-        await process.wait()
+        await _terminate_process_group(process)
         raise RuntimeError(f"❌ vLLM server failed to start within {timeout} seconds")
 
     try:
         yield server_url
     finally:
         logging.info("🛑 Shutting down managed vLLM server...")
-        process.terminate()
-        await process.wait()
+        await _terminate_process_group(process)
         logging.info("✅ Server safely terminated.")
