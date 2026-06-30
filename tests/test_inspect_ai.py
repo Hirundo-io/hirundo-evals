@@ -17,6 +17,8 @@ def test_inspect_command_maps_aliases_and_prefixes_hf_models() -> None:
         "hf/ibm-granite/granite-4.1-3b",
         "--log-dir",
         "raw-logs",
+        "--log-format",
+        "json",
         "--limit",
         "1",
     ]
