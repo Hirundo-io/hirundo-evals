@@ -69,6 +69,14 @@ hirundo-evals MODEL FRAMEWORK TASK --output-dir eval_outputs
 
 The summary CSV is appended across runs and includes fields such as framework, run ID, benchmark, metric, score, and runtime.
 
+Example `results.csv` output:
+
+| Run ID | Framework | Benchmark | Metric | Score | Runtime (sec) |
+| --- | --- | --- | --- | --- | --- |
+| 20260624_233538 | inspect-ai | ifeval | final_acc (%) ⬆️ | 67.00 | 600 |
+| 20260624_233538 | inspect-ai | scicode | percentage_main_problems_solved (%) ⬆️ | 45.00 | 1200 |
+| 20260624_233538 | inspect-ai | scicode | percentage_subproblems_solved (%) ⬆️ | 56.67 | 1200 |
+
 ## Supported Frameworks
 
 Supported frameworks currently include Inspect AI.
