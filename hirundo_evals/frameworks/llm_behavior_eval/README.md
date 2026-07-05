@@ -1,6 +1,6 @@
 # LLM Behavior Eval Adapter
 
-This adapter runs Hirundo's `llm-behavior-eval` CLI through `hirundo-evals`.
+This adapter runs Hirundo's [llm-behavior-eval](https://github.com/hirundo-io/llm-behavior-eval) CLI through `hirundo-evals`.
 
 ## Usage
 
@@ -21,6 +21,7 @@ hirundo-evals ibm-granite/granite-4.1-3b llm-behavior-eval hallu,prompt-injectio
 ```
 
 Arguments not recognized by `hirundo-evals` are forwarded to `llm-behavior-eval`.
+See the [`llm-behavior-eval` README](https://github.com/hirundo-io/llm-behavior-eval/blob/main/README.md#run-the-evaluator) for more information about the underlying CLI.
 
 ## Behavior Presets
 
@@ -31,8 +32,10 @@ The behavior argument is passed to `llm-behavior-eval` as its behavior preset st
 - BBQ bias and unbias: `bias:<type>` or `unbias:<type>`
 - UNQOVER bias: `unqover:bias:<type>`
 - Bloom bias and unbias: `bloom:bias:<type|all>` or `bloom:unbias:<type|all>`
+- Over-refusal (OR-bench): `refusal:orbench`
 
 Use comma-separated values to run more than one behavior in the same command.
+See the [`llm-behavior-eval` README](https://github.com/hirundo-io/llm-behavior-eval/blob/main/README.md#why-bbq) for more information about the supported behavior presets.
 
 ## Native vLLM
 
