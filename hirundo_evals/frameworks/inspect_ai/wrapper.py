@@ -45,10 +45,10 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
     TASK_GROUPS = {
         "nemo-skills": [
             "aime25",
-            "gpqa_diamond",
+            "gpqa",
             "ifeval",
-            "livecodebench_pro",
-            "mmlu_pro",
+            "livecodebench",
+            "mmlu-pro",
             "scicode",
         ],
     }
