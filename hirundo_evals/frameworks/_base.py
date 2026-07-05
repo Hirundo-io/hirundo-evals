@@ -52,7 +52,7 @@ class BaseEvalFrameworkWrapper(ABC):
 
         Args:
             model: Optional model override.
-            model_base_url: Optional model base URL.
+            model_base_url: Optional model base URL. Required if the model is hosted externally.
             extra: Extra arguments to pass to the framework.
 
         Returns:
