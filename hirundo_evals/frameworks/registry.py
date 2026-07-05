@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
 class EvalFramework(str, Enum):
     INSPECT = "inspect-ai"
+    LLM_BEHAVIOR_EVAL = "llm-behavior-eval"
     PINCHBENCH = "pinchbench"
 
 
@@ -30,6 +31,10 @@ def get_eval_framework_wrapper(
         from .inspect_ai.wrapper import InspectWrapper
 
         wrapper = InspectWrapper
+    elif framework == EvalFramework.LLM_BEHAVIOR_EVAL:
+        from .llm_behavior_eval.wrapper import LLMBehaviorEvalWrapper
+
+        wrapper = LLMBehaviorEvalWrapper
     elif framework == EvalFramework.PINCHBENCH:
         from .pinchbench.wrapper import PinchBenchWrapper
 

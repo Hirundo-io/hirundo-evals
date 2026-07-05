@@ -30,10 +30,11 @@ class BaseEvalFrameworkWrapper(ABC):
 
     Class Attributes:
         SUPPORTS_UNSERVED_MODELS: Whether the framework supports unserved models.
-
+        SUPPORTS_MANAGED_VLLM: Whether the framework supports managed vLLM.
     """
 
     SUPPORTS_UNSERVED_MODELS = True
+    SUPPORTS_MANAGED_VLLM = True
 
     def __init__(self, model: str, tasks: list[str], log_dir: str | Path):
         self.model = model
@@ -89,6 +90,12 @@ class BaseEvalFrameworkWrapper(ABC):
             The framework-specific vLLM server arguments.
         """
         return vllm_args
+
+    def get_framework_vllm_args(self, extra: list[str] | None = None) -> list[str]:
+        """
+        Return framework-specific CLI arguments for native vLLM execution.
+        """
+        return extra or []
 
     @abstractmethod
     def prepare_results(self) -> list[OutputEntry]:

@@ -30,6 +30,7 @@ dependencies = [
   "inspect-evals",
   "instruction-following-eval @ git+https://github.com/josejg/instruction_following_eval",
   "openclaw",
+  "llm-behavior-eval @ git+https://github.com/Hirundo-io/llm-behavior-eval.git",
   "accelerate",
   "typer",
   "bidict",
@@ -57,6 +58,7 @@ docs = { requires-python = ">=3.11.4" }
 
 [tool.uv.sources]
 hirundo-evals = { path = ".", editable = true }
+# llm-behavior-eval = { path = "../llm-behavior-eval", editable = true }
 
 [tool.setuptools.packages.find]
 include = ["hirundo_evals*"]
