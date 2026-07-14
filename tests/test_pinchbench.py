@@ -1,73 +1,68 @@
-import json
 from pathlib import Path
 
-from hirundo_evals.frameworks.pinchbench.wrapper import PinchBenchWrapper
+from hirundo_evals.frameworks.inspect_ai.external.pinchbench.wrapper import (
+    PinchBenchWrapper,
+)
 
 
-def test_pinchbench_adds_required_vllm_tool_call_args() -> None:
-    wrapper = PinchBenchWrapper("ibm-granite/granite-4.1-3b", ["all"], "logs/run")
-
-    args = wrapper.get_vllm_args("--tensor-parallel-size 1")
-
-    assert "--tensor-parallel-size 1" in args
-    assert "--enable-auto-tool-choice" in args
-    assert "--tool-call-parser hermes" in args
-
-
-def test_pinchbench_command_uses_absolute_output_dir_and_forwards_extra(
-    tmp_path,
-) -> None:
+def test_pinchbench_command_uses_inspect_wrapper() -> None:
     wrapper = PinchBenchWrapper(
-        "ibm-granite/granite-4.1-3b",
-        ["task_calendar"],
-        str(tmp_path / "raw"),
+        "ibm-granite/granite-4.1-3b", ["all"], "logs/run"
     )
 
     cmd = wrapper.get_cli_cmd(
         model="openai/ibm-granite/granite-4.1-3b",
-        extra=["--no-upload"],
+        model_base_url="http://localhost:8000/v1",
+        extra=["--limit", "1"],
     )
 
-    assert cmd[:4] == [
-        "bash",
-        "scripts/run.sh",
+    assert cmd[:6] == [
+        "uv",
+        "run",
+        "inspect",
+        "eval",
+        "src/pinchbench/pinchbench.py@pinchbench",
         "--model",
-        "vllm/ibm-granite/granite-4.1-3b",
     ]
-    assert cmd[cmd.index("--suite") + 1] == "task_calendar"
-    assert Path(cmd[cmd.index("--output-dir") + 1]).is_absolute()
-    assert cmd[-1] == "--no-upload"
+    assert cmd[cmd.index("--model") + 1] == "openai/ibm-granite/granite-4.1-3b"
+    assert cmd[cmd.index("--model-base-url") + 1] == "http://localhost:8000/v1"
+    assert cmd[cmd.index("-T") + 1] == "mode=full"
+    assert cmd[-2:] == ["--limit", "1"]
 
 
-def test_pinchbench_prepare_results_reads_per_task_scores(tmp_path) -> None:
-    output = {
-        "efficiency": {"total_execution_time_seconds": 12.5},
-        "tasks": [
-            {
-                "task_id": "task_calendar",
-                "execution_time": 6.3,
-                "grading": {"mean": 0.8333333333},
-            },
-            {
-                "task_id": "task_without_score",
-                "execution_time": 1.0,
-                "grading": {},
-            },
-        ],
+def test_pinchbench_command_passes_mode_and_suite_task_args() -> None:
+    wrapper = PinchBenchWrapper(
+        "ibm-granite/granite-4.1-3b",
+        ["subset", "task_calendar", "task_weather"],
+        "logs/run",
+    )
+
+    cmd = wrapper.get_cli_cmd(model_base_url="http://localhost:8000/v1")
+
+    task_args = cmd[cmd.index("-T") :]
+    assert task_args[:6] == [
+        "-T",
+        "mode=subset",
+        "-T",
+        "model=ibm-granite/granite-4.1-3b",
+        "-T",
+        "suite=task_calendar,task_weather",
+    ]
+
+
+def test_pinchbench_environment_configures_external_adapter() -> None:
+    wrapper = PinchBenchWrapper("model", ["smoke"], "logs/run")
+    benchmark_root = Path("pinchbench")
+
+    environment = wrapper.environment(
+        "model-id",
+        "http://localhost:8000/v1",
+        benchmark_root,
+    )
+
+    assert environment == {
+        "PINCHBENCH_ROOT": str(benchmark_root),
+        "PINCHBENCH_MODEL_BASE_URL": "http://localhost:8000/v1",
+        "PINCHBENCH_MODEL": "model-id",
+        "PINCHBENCH_API_KEY": "vllm-local",
     }
-    (tmp_path / "0001_vllm-model.json").write_text(json.dumps(output), encoding="utf-8")
-
-    rows = PinchBenchWrapper(
-        "model", ["task_calendar"], str(tmp_path)
-    ).prepare_results()
-
-    assert rows == [
-        {
-            "Run ID": tmp_path.name,
-            "Framework": "pinchbench",
-            "Benchmark": "task_calendar",
-            "Metric": "overall_score (%) ⬆️",
-            "Score": 83.33333333,
-            "Runtime (sec)": 6.3,
-        }
-    ]

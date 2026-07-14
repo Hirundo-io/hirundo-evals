@@ -29,7 +29,6 @@ dependencies = [
   "inspect-ai",
   "inspect-evals",
   "instruction-following-eval @ git+https://github.com/josejg/instruction_following_eval",
-  "openclaw",
   "accelerate",
   "typer",
   "bidict",

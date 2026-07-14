@@ -1,13 +1,16 @@
+from __future__ import annotations
+
 import logging
-import os
-from datetime import datetime
 from pathlib import Path
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 from bidict import bidict
-from inspect_ai.log import EvalLog
 
 from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
+from ._utils import load_eval_logs, log_runtime
+
+if TYPE_CHECKING:
+    from inspect_ai.log import EvalLog
 
 
 class InspectScore(TypedDict):
@@ -209,31 +212,6 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
 
         return cmd
 
-    @staticmethod
-    def _get_runtime_from_timestamps(started_at: str, completed_at: str) -> int | str:
-        """
-        Calculate runtime (in seconds) from ISO format timestamp strings.
-
-        Args:
-            started_at: The start timestamp.
-            completed_at: The end timestamp.
-
-        Returns:
-            The runtime in seconds.
-            "N/A" if the runtime cannot be calculated.
-        """
-        try:
-            # inspect_ai timestamps are usually ISO 8601 formatted strings
-            # replace Z with +00:00 to make it compatible with python's fromisoformat
-            start = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
-            end = datetime.fromisoformat(completed_at.replace("Z", "+00:00"))
-            duration = end - start
-            # Strip microseconds for cleaner display
-            duration_seconds = int(duration.total_seconds())
-            return duration_seconds
-        except Exception:
-            return "N/A"
-
     def prepare_results(self) -> list[OutputEntry]:
         """
         Prepare the results of the evaluation for CSV export.
@@ -242,13 +220,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             The results of the evaluation for CSV export.
         """
         # Load the logs from the JSON files
-        logs: list[EvalLog] = []
-        for file in os.listdir(self.log_dir):
-            if not file.endswith(".json"):
-                continue
-            with open(os.path.join(self.log_dir, file)) as f:
-                raw_json = f.read()
-                logs.append(EvalLog.model_validate_json(raw_json))
+        logs: list[EvalLog] = load_eval_logs(self.log_dir)
         # Prepare results for CSV export
         results: list[OutputEntry] = []
         run_id = Path(self.log_dir).name
@@ -258,16 +230,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             target_metrics = InspectWrapper.FINAL_METRICS_BY_BENCHMARK.get(alias)
             status = log.status
             # Extract runtime from log.stats if available
-            if (
-                log.stats
-                and hasattr(log.stats, "started_at")
-                and hasattr(log.stats, "completed_at")
-            ):
-                runtime = self._get_runtime_from_timestamps(
-                    log.stats.started_at, log.stats.completed_at
-                )
-            else:
-                runtime = "N/A"
+            runtime = log_runtime(log)
             # Initialize the scores
             score_values: dict[str, float | str] = {}
             # If the task completed successfully, extract the targeted metrics

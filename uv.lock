@@ -743,17 +743,6 @@ wheels = [
 ]
 
 [[package]]
-name = "cmdop"
-version = "1.1.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "protobuf" },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6a/6c/ad7c049ce96ee7f3993cb69e7995952823a7517c0445d64f94afc6bd374d/cmdop-1.1.0-py3-none-any.whl", hash = "sha256:9325f4dab4309c368fafbd0ca782114e07b10d44da5a5b3be885e3b181702db6", size = 24851725, upload-time = "2026-06-17T01:10:35.197Z" },
-]
-
-[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -773,10 +762,10 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "loguru", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torch", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "transformers", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
+    { name = "loguru" },
+    { name = "pydantic" },
+    { name = "torch" },
+    { name = "transformers" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/41/1b/c3c4a98ec5f2727656336f07a0c35862195c310d8eb0b2fa5b4be6848680/compressed_tensors-0.15.0.1.tar.gz", hash = "sha256:a8e93054e8a5ec49c980b09ed36c4c1249b4a8ee167920a8e461c4da26e78d99", size = 229412, upload-time = "2026-04-10T14:23:54.708Z" }
 wheels = [
@@ -796,10 +785,10 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "loguru", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torch", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "transformers", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
+    { name = "loguru" },
+    { name = "pydantic" },
+    { name = "torch" },
+    { name = "transformers" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2c/9e/d7f18bd9a0354088abc11a0c1f2c7698f7c49e5a709faedf6a46e388f693/compressed_tensors-0.17.0.tar.gz", hash = "sha256:15c20d06bdbcf35b51fc99fd125e7b9be1e1855567c33b7a46dfac26ad6fb126", size = 257091, upload-time = "2026-06-03T16:49:17.208Z" }
 wheels = [
@@ -815,7 +804,7 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/66/54/eb9bfc647b19f2009dd5c7f5ec51c4e6ca831725f1aea7a993034f483147/contourpy-1.3.2.tar.gz", hash = "sha256:b6945942715a034c671b7fc54f9588126b0b8bf23db2696e3ca8328f3ff0ab54", size = 13466130, upload-time = "2025-04-15T17:47:53.79Z" }
 wheels = [
@@ -892,7 +881,7 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/58/01/1253e6698a07380cd31a736d248a3f2a50a7c88779a1813da27503cadc2a/contourpy-1.3.3.tar.gz", hash = "sha256:083e12155b210502d0bca491432bb04d56dc3432f95a979b429f2848c3dbe880", size = 13466174, upload-time = "2025-07-26T12:03:12.549Z" }
@@ -1074,7 +1063,7 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
+    { name = "typing-extensions" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/46/c8/1687a83d0739151ca410a5716b5f1dfb6f8feb6381c7c695d72264f17e1c/cuda_tile-1.3.0-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:c55616c648f06f84808648a521c67f2d7c790574d6b53ddf8c3bfbc995d36d45", size = 245438, upload-time = "2026-04-20T15:51:18.862Z" },
@@ -1093,9 +1082,9 @@ wheels = [
 
 [package.optional-dependencies]
 tileiras = [
-    { name = "nvidia-cuda-nvcc", version = "13.2.78", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-cuda-tileiras", marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-nvvm", version = "13.2.78", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-nvcc", version = "13.2.78", source = { registry = "https://pypi.org/simple" } },
+    { name = "nvidia-cuda-tileiras" },
+    { name = "nvidia-nvvm", version = "13.2.78", source = { registry = "https://pypi.org/simple" } },
 ]
 
 [[package]]
@@ -1111,7 +1100,7 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.11' or sys_platform == 'darwin'" },
+    { name = "typing-extensions" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c2/df/0bb510403487484bed0a844793a1e8a043e3c4fe35f92f6e1cb5de3bd35e/cuda_tile-1.4.0-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:8758454ae3971cd8dc195a61210e42ad3696528a9da6a4a429da4cdbbf305d80", size = 281176, upload-time = "2026-05-27T17:45:03.394Z" },
@@ -1130,7 +1119,7 @@ wheels = [
 
 [package.optional-dependencies]
 tileiras = [
-    { name = "cuda-toolkit", version = "13.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' and sys_platform == 'darwin'" },
+    { name = "cuda-toolkit", version = "13.3.0", source = { registry = "https://pypi.org/simple" } },
 ]
 
 [[package]]
@@ -1150,37 +1139,37 @@ wheels = [
 
 [package.optional-dependencies]
 cublas = [
-    { name = "nvidia-cublas", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cublas" },
 ]
 cudart = [
-    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" } },
 ]
 cufft = [
-    { name = "nvidia-cufft", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cufft" },
 ]
 cufile = [
-    { name = "nvidia-cufile", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cufile" },
 ]
 cupti = [
-    { name = "nvidia-cuda-cupti", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cuda-cupti" },
 ]
 curand = [
-    { name = "nvidia-curand", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-curand" },
 ]
 cusolver = [
-    { name = "nvidia-cusolver", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cusolver" },
 ]
 cusparse = [
-    { name = "nvidia-cusparse", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cusparse" },
 ]
 nvjitlink = [
-    { name = "nvidia-nvjitlink", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-nvjitlink" },
 ]
 nvrtc = [
-    { name = "nvidia-cuda-nvrtc", version = "13.0.88", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cuda-nvrtc", version = "13.0.88", source = { registry = "https://pypi.org/simple" } },
 ]
 nvtx = [
-    { name = "nvidia-nvtx", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-nvtx" },
 ]
 
 [[package]]
@@ -1397,7 +1386,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -1417,11 +1406,11 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "annotated-doc", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "starlette", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "typing-extensions", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "typing-inspection", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
+    { name = "annotated-doc" },
+    { name = "pydantic" },
+    { name = "starlette" },
+    { name = "typing-extensions" },
+    { name = "typing-inspection" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/81/2d/ff8d91d7b564d464629a0fd50a4489c97fcb836ac230bf3a7269232a9b1f/fastapi-0.136.3.tar.gz", hash = "sha256:e487fae93ad408e6f47641ee4dfe389864fd7bec92e547ea8498fc13f43e83ab", size = 396410, upload-time = "2026-05-23T18:53:15.192Z" }
 wheels = [
@@ -1430,15 +1419,15 @@ wheels = [
 
 [package.optional-dependencies]
 standard = [
-    { name = "email-validator", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "fastapi-cli", extra = ["standard"], marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "fastar", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "httpx", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "jinja2", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic-extra-types", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic-settings", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "python-multipart", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "uvicorn", extra = ["standard"], marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
+    { name = "email-validator" },
+    { name = "fastapi-cli", extra = ["standard"] },
+    { name = "fastar" },
+    { name = "httpx" },
+    { name = "jinja2" },
+    { name = "pydantic-extra-types" },
+    { name = "pydantic-settings" },
+    { name = "python-multipart" },
+    { name = "uvicorn", extra = ["standard"] },
 ]
 
 [[package]]
@@ -1452,11 +1441,11 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "annotated-doc", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "starlette", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "typing-extensions", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "typing-inspection", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
+    { name = "annotated-doc" },
+    { name = "pydantic" },
+    { name = "starlette" },
+    { name = "typing-extensions" },
+    { name = "typing-inspection" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d5/b1/e5b92c59d2c37817e77c1a8c2fc1f79cdcc04c68253e5406b43e3204cba7/fastapi-0.137.1.tar.gz", hash = "sha256:822360704230d9533d8d9475399613525968aa2f0b5bd2a3ccc9f18c88fd541c", size = 408293, upload-time = "2026-06-15T11:28:20.79Z" }
 wheels = [
@@ -1465,15 +1454,15 @@ wheels = [
 
 [package.optional-dependencies]
 standard = [
-    { name = "email-validator", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "fastapi-cli", extra = ["standard"], marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "fastar", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "httpx", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "jinja2", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic-extra-types", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic-settings", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "python-multipart", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "uvicorn", extra = ["standard"], marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
+    { name = "email-validator" },
+    { name = "fastapi-cli", extra = ["standard"] },
+    { name = "fastar" },
+    { name = "httpx" },
+    { name = "jinja2" },
+    { name = "pydantic-extra-types" },
+    { name = "pydantic-settings" },
+    { name = "python-multipart" },
+    { name = "uvicorn", extra = ["standard"] },
 ]
 
 [[package]]
@@ -1674,22 +1663,22 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "apache-tvm-ffi", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "click", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "cuda-tile", version = "1.4.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "einops", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "ninja", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "apache-tvm-ffi" },
+    { name = "click" },
+    { name = "cuda-tile", version = "1.4.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "einops" },
+    { name = "ninja" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*' and sys_platform == 'darwin'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform == 'darwin'" },
-    { name = "nvidia-cudnn-frontend", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "nvidia-cutlass-dsl", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "nvidia-ml-py", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "packaging", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "requests", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tabulate", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torch", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tqdm", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
+    { name = "nvidia-cudnn-frontend", version = "1.18.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "nvidia-cutlass-dsl" },
+    { name = "nvidia-ml-py" },
+    { name = "packaging" },
+    { name = "requests" },
+    { name = "tabulate" },
+    { name = "torch" },
+    { name = "tqdm" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/db/53/dbf2157f2bbb96d6f7a6891cf6abfb2e6e18963760a0c53e96c2de5c59db/flashinfer_python-0.6.11.post2.tar.gz", hash = "sha256:e9fdac56aea9f0f58a4e69b0645c54993760d3cc6c7bf5c2df4ce5a0aecc7953", size = 9248515, upload-time = "2026-05-14T04:57:32.83Z" }
 wheels = [
@@ -1709,22 +1698,22 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "apache-tvm-ffi", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "click", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "cuda-tile", version = "1.3.0", source = { registry = "https://pypi.org/simple" }, extra = ["tileiras"], marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "cuda-tile", version = "1.4.0", source = { registry = "https://pypi.org/simple" }, extra = ["tileiras"], marker = "python_full_version == '3.11.*' and sys_platform == 'darwin'" },
-    { name = "einops", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "ninja", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
+    { name = "apache-tvm-ffi" },
+    { name = "click" },
+    { name = "cuda-tile", version = "1.3.0", source = { registry = "https://pypi.org/simple" }, extra = ["tileiras"], marker = "sys_platform != 'darwin'" },
+    { name = "cuda-tile", version = "1.4.0", source = { registry = "https://pypi.org/simple" }, extra = ["tileiras"], marker = "sys_platform == 'darwin'" },
+    { name = "einops" },
+    { name = "ninja" },
+    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13' or sys_platform == 'darwin'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'darwin'" },
-    { name = "nvidia-cudnn-frontend", version = "1.25.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "nvidia-cutlass-dsl", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "nvidia-ml-py", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "packaging", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "requests", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tabulate", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torch", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tqdm", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
+    { name = "nvidia-cudnn-frontend", version = "1.25.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "nvidia-cutlass-dsl" },
+    { name = "nvidia-ml-py" },
+    { name = "packaging" },
+    { name = "requests" },
+    { name = "tabulate" },
+    { name = "torch" },
+    { name = "tqdm" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/61/d0/114a64319f5a804def2f307d5ed8f95e6d94a2acdacac4ed5f57525cbf46/flashinfer_python-0.6.12.tar.gz", hash = "sha256:bed67f9c46d81dd22611dfef2787998fc412b2fe2648d9e7d336861dda912694", size = 9453326, upload-time = "2026-05-29T23:45:16.466Z" }
 wheels = [
@@ -2283,7 +2272,6 @@ requires-dist = [
     { name = "inspect-evals" },
     { name = "instruction-following-eval", git = "https://github.com/josejg/instruction_following_eval" },
     { name = "mlflow", marker = "extra == 'mlflow'", specifier = ">=2.0.0" },
-    { name = "openclaw" },
     { name = "opencv-python-headless", marker = "extra == 'gpt-oss'", specifier = ">=4.12.0.88" },
     { name = "typer" },
     { name = "vllm", marker = "extra == 'vllm'", specifier = ">=0.15.0" },
@@ -2414,19 +2402,19 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "cuda-bindings", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "jinja2", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "cuda-bindings" },
+    { name = "jinja2" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*' and sys_platform == 'darwin'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform == 'darwin'" },
-    { name = "nvidia-ml-py", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pyelftools", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "safetensors", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tabulate", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torch", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tqdm", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "triton", version = "3.6.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'darwin'" },
-    { name = "triton", version = "3.7.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version != '3.11.*' and sys_platform == 'darwin'" },
+    { name = "nvidia-ml-py" },
+    { name = "pyelftools" },
+    { name = "safetensors" },
+    { name = "tabulate" },
+    { name = "torch" },
+    { name = "tqdm" },
+    { name = "triton", version = "3.6.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'darwin'" },
+    { name = "triton", version = "3.7.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/06/f4/e141f45697b7d0d38bfaf8766a7362d8f0136e3cff2620624f24f68e2700/humming_kernels-0.1.2.tar.gz", hash = "sha256:7894c80061c7866591bef12617da720ac4e925636ffc99464af433a5dcb035eb", size = 117251, upload-time = "2026-05-23T16:18:08.084Z" }
 wheels = [
@@ -2435,12 +2423,12 @@ wheels = [
 
 [package.optional-dependencies]
 cu13 = [
-    { name = "nvidia-cuda-cccl", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "nvidia-cuda-nvcc", version = "13.3.33", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "nvidia-cuda-nvrtc", version = "13.0.88", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-cuda-nvrtc", version = "13.3.33", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version != '3.11.*' and sys_platform == 'darwin'" },
-    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-cuda-runtime", version = "13.3.29", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version != '3.11.*' and sys_platform == 'darwin'" },
+    { name = "nvidia-cuda-cccl" },
+    { name = "nvidia-cuda-nvcc", version = "13.3.33", source = { registry = "https://pypi.org/simple" } },
+    { name = "nvidia-cuda-nvrtc", version = "13.0.88", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-nvrtc", version = "13.3.33", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
+    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-runtime", version = "13.3.29", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
 ]
 
 [[package]]
@@ -2456,18 +2444,18 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "cuda-bindings", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "jinja2", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
+    { name = "cuda-bindings" },
+    { name = "jinja2" },
+    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13' or sys_platform == 'darwin'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'darwin'" },
-    { name = "nvidia-ml-py", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pyelftools", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "safetensors", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tabulate", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torch", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tqdm", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "triton", version = "3.6.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "triton", version = "3.7.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' and sys_platform == 'darwin'" },
+    { name = "nvidia-ml-py" },
+    { name = "pyelftools" },
+    { name = "safetensors" },
+    { name = "tabulate" },
+    { name = "torch" },
+    { name = "tqdm" },
+    { name = "triton", version = "3.6.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'darwin'" },
+    { name = "triton", version = "3.7.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/f5/f6/05e95b66cca48def9db0d6c40374fe285c7d9c913fe126030bcfb7cb3088/humming_kernels-0.1.4.tar.gz", hash = "sha256:fdaf4f23cc6b03bb1be3fd24aa11dc7798881e5448826e2404b4f12d8096f0d0", size = 117555, upload-time = "2026-06-04T03:24:03.504Z" }
 wheels = [
@@ -2476,13 +2464,13 @@ wheels = [
 
 [package.optional-dependencies]
 cu13 = [
-    { name = "nvidia-cuda-cccl", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "nvidia-cuda-nvcc", version = "13.2.78", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-cuda-nvcc", version = "13.3.33", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' and sys_platform == 'darwin'" },
-    { name = "nvidia-cuda-nvrtc", version = "13.0.88", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-cuda-nvrtc", version = "13.3.33", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' and sys_platform == 'darwin'" },
-    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-cuda-runtime", version = "13.3.29", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*' and sys_platform == 'darwin'" },
+    { name = "nvidia-cuda-cccl" },
+    { name = "nvidia-cuda-nvcc", version = "13.2.78", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-nvcc", version = "13.3.33", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
+    { name = "nvidia-cuda-nvrtc", version = "13.0.88", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-nvrtc", version = "13.3.33", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
+    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-runtime", version = "13.3.29", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
 ]
 
 [[package]]
@@ -2674,19 +2662,19 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "backoff", marker = "python_full_version < '3.11'" },
-    { name = "datasets", marker = "python_full_version < '3.11'" },
-    { name = "hf-xet", marker = "python_full_version < '3.11'" },
-    { name = "huggingface-hub", marker = "python_full_version < '3.11'" },
-    { name = "inspect-ai", marker = "python_full_version < '3.11'" },
-    { name = "jinja2", marker = "python_full_version < '3.11'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "pillow", marker = "python_full_version < '3.11'" },
-    { name = "pydantic", marker = "python_full_version < '3.11'" },
-    { name = "pyyaml", marker = "python_full_version < '3.11'" },
-    { name = "requests", marker = "python_full_version < '3.11'" },
-    { name = "tiktoken", marker = "python_full_version < '3.11'" },
-    { name = "toml", marker = "python_full_version < '3.11'" },
+    { name = "backoff" },
+    { name = "datasets" },
+    { name = "hf-xet" },
+    { name = "huggingface-hub" },
+    { name = "inspect-ai" },
+    { name = "jinja2" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" } },
+    { name = "pillow" },
+    { name = "pydantic" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "tiktoken" },
+    { name = "toml" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d8/75/7ed73ce944d93c05805506313628bf743996ce41bb8a3000e96c77e807a0/inspect_evals-0.5.1.tar.gz", hash = "sha256:4d4d79bbcbade62232b7833f4d8a425e1a1d661e303555e57194d0b40ced9166", size = 28320432, upload-time = "2026-03-12T19:15:49.811Z" }
 wheels = [
@@ -2708,20 +2696,20 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "backoff", marker = "python_full_version >= '3.11'" },
-    { name = "datasets", marker = "python_full_version >= '3.11'" },
-    { name = "hf-xet", marker = "python_full_version >= '3.11'" },
-    { name = "huggingface-hub", marker = "python_full_version >= '3.11'" },
-    { name = "inspect-ai", marker = "python_full_version >= '3.11'" },
-    { name = "jinja2", marker = "python_full_version >= '3.11'" },
-    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "backoff" },
+    { name = "datasets" },
+    { name = "hf-xet" },
+    { name = "huggingface-hub" },
+    { name = "inspect-ai" },
+    { name = "jinja2" },
+    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "pillow", marker = "python_full_version >= '3.11'" },
-    { name = "pydantic", marker = "python_full_version >= '3.11'" },
-    { name = "pyyaml", marker = "python_full_version >= '3.11'" },
-    { name = "requests", marker = "python_full_version >= '3.11'" },
-    { name = "tiktoken", marker = "python_full_version >= '3.11'" },
-    { name = "toml", marker = "python_full_version >= '3.11'" },
+    { name = "pillow" },
+    { name = "pydantic" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "tiktoken" },
+    { name = "toml" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/dc/1f/dd45584955424c99dea4989f6d56abf438d6b59e1408774cfb6dc542694a/inspect_evals-0.14.1.tar.gz", hash = "sha256:3d82242d08319572d446e2dcba7a52df744e180f6664ef2b8aeb45d033166de0", size = 44575245, upload-time = "2026-06-18T16:30:28.617Z" }
 wheels = [
@@ -3242,15 +3230,15 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "contourpy", version = "1.3.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "cycler", marker = "python_full_version < '3.11'" },
-    { name = "fonttools", marker = "python_full_version < '3.11'" },
-    { name = "kiwisolver", marker = "python_full_version < '3.11'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "packaging", marker = "python_full_version < '3.11'" },
-    { name = "pillow", marker = "python_full_version < '3.11'" },
-    { name = "pyparsing", marker = "python_full_version < '3.11'" },
-    { name = "python-dateutil", marker = "python_full_version < '3.11'" },
+    { name = "contourpy", version = "1.3.2", source = { registry = "https://pypi.org/simple" } },
+    { name = "cycler" },
+    { name = "fonttools" },
+    { name = "kiwisolver" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" } },
+    { name = "packaging" },
+    { name = "pillow" },
+    { name = "pyparsing" },
+    { name = "python-dateutil" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/63/1b/4be5be87d43d327a0cf4de1a56e86f7f84c89312452406cf122efe2839e6/matplotlib-3.10.9.tar.gz", hash = "sha256:fd66508e8c6877d98e586654b608a0456db8d7e8a546eb1e2600efd957302358", size = 34811233, upload-time = "2026-04-24T00:14:13.539Z" }
 wheels = [
@@ -3311,16 +3299,16 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "contourpy", version = "1.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "cycler", marker = "python_full_version >= '3.11'" },
-    { name = "fonttools", marker = "python_full_version >= '3.11'" },
-    { name = "kiwisolver", marker = "python_full_version >= '3.11'" },
-    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "contourpy", version = "1.3.3", source = { registry = "https://pypi.org/simple" } },
+    { name = "cycler" },
+    { name = "fonttools" },
+    { name = "kiwisolver" },
+    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "packaging", marker = "python_full_version >= '3.11'" },
-    { name = "pillow", marker = "python_full_version >= '3.11'" },
-    { name = "pyparsing", marker = "python_full_version >= '3.11'" },
-    { name = "python-dateutil", marker = "python_full_version >= '3.11'" },
+    { name = "packaging" },
+    { name = "pillow" },
+    { name = "pyparsing" },
+    { name = "python-dateutil" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/1f/24/080c99d223d158d3a8902769269ab6da5b50f7a0e6e072513907e02b7a6c/matplotlib-3.11.0.tar.gz", hash = "sha256:68c0c7be01b30dcca3638934f7f591df73401235cbdbf0d1ab1c71e7db7f8b57", size = 33251176, upload-time = "2026-06-12T02:29:15.508Z" }
 wheels = [
@@ -4196,9 +4184,9 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "nvidia-cuda-crt", marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-nvvm", version = "13.2.78", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-crt" },
+    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" } },
+    { name = "nvidia-nvvm", version = "13.2.78", source = { registry = "https://pypi.org/simple" } },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ec/df/faf551572ae1359290afa5cb05d2c4b7e6674b07b8283b20eab4dbad15f6/nvidia_cuda_nvcc-13.2.78-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:dfc76950c775cd00ce588f15192f08c9b858c0dcfa7da685acf39a3d0d8f588b", size = 38713559, upload-time = "2026-04-13T09:42:17.478Z" },
@@ -4219,10 +4207,10 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "nvidia-cuda-crt", marker = "python_full_version < '3.11' or sys_platform == 'darwin'" },
-    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-crt" },
+    { name = "nvidia-cuda-runtime", version = "13.0.96", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'darwin'" },
     { name = "nvidia-cuda-runtime", version = "13.3.29", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform == 'darwin'" },
-    { name = "nvidia-nvvm", version = "13.3.33", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or sys_platform == 'darwin'" },
+    { name = "nvidia-nvvm", version = "13.3.33", source = { registry = "https://pypi.org/simple" } },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/be/b6/bb07a3a63b5b7b55516366747892abbf3ee62d616684c40bb51e6cbfe956/nvidia_cuda_nvcc-13.3.33-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:8c348623b1434aebd234da9ec1f81022587ae4995d65c3dc8a7743245cc441f7", size = 39515074, upload-time = "2026-05-26T16:34:28.489Z" },
@@ -4293,8 +4281,8 @@ name = "nvidia-cuda-tileiras"
 version = "13.2.78"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cuda-nvcc", version = "13.2.78", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
-    { name = "nvidia-nvvm", version = "13.2.78", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-nvcc", version = "13.2.78", source = { registry = "https://pypi.org/simple" } },
+    { name = "nvidia-nvvm", version = "13.2.78", source = { registry = "https://pypi.org/simple" } },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/48/04/eb26cc1d67c653f5dbe8c13fd6da9c1e844b097147051b5052ac5e6d4047/nvidia_cuda_tileiras-13.2.78-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:658299efca52a20496b425efb0b19cb1ea7d57406a18d3f5024d4df92d5b54c1", size = 36418791, upload-time = "2026-04-13T09:48:30.107Z" },
@@ -4307,7 +4295,7 @@ name = "nvidia-cudnn-cu13"
 version = "9.19.0.56"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas", marker = "sys_platform != 'darwin'" },
+    { name = "nvidia-cublas" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f1/84/26025437c1e6b61a707442184fa0c03d083b661adf3a3eecfd6d21677740/nvidia_cudnn_cu13-9.19.0.56-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:6ed29ffaee1176c612daf442e4dd6cfeb6a0caa43ddcbeb59da94953030b1be4", size = 433781201, upload-time = "2026-02-03T20:40:53.805Z" },
@@ -4371,7 +4359,7 @@ name = "nvidia-cufft"
 version = "12.0.0.61"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink", marker = "sys_platform != 'darwin'" },
+    { name = "nvidia-nvjitlink" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/ae/f417a75c0259e85c1d2f83ca4e960289a5f814ed0cea74d18c353d3e989d/nvidia_cufft-12.0.0.61-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:2708c852ef8cd89d1d2068bdbece0aa188813a0c934db3779b9b1faa8442e5f5", size = 214053554, upload-time = "2025-09-04T08:31:38.196Z" },
@@ -4401,9 +4389,9 @@ name = "nvidia-cusolver"
 version = "12.0.4.66"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas", marker = "sys_platform != 'darwin'" },
-    { name = "nvidia-cusparse", marker = "sys_platform != 'darwin'" },
-    { name = "nvidia-nvjitlink", marker = "sys_platform != 'darwin'" },
+    { name = "nvidia-cublas" },
+    { name = "nvidia-cusparse" },
+    { name = "nvidia-nvjitlink" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c8/c3/b30c9e935fc01e3da443ec0116ed1b2a009bb867f5324d3f2d7e533e776b/nvidia_cusolver-12.0.4.66-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:02c2457eaa9e39de20f880f4bd8820e6a1cfb9f9a34f820eb12a155aa5bc92d2", size = 223467760, upload-time = "2025-09-04T08:33:04.222Z" },
@@ -4415,7 +4403,7 @@ name = "nvidia-cusparse"
 version = "12.6.3.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink", marker = "sys_platform != 'darwin'" },
+    { name = "nvidia-nvjitlink" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f8/94/5c26f33738ae35276672f12615a64bd008ed5be6d1ebcb23579285d960a9/nvidia_cusparse-12.6.3.3-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:80bcc4662f23f1054ee334a15c72b8940402975e0eab63178fc7e670aa59472c", size = 162155568, upload-time = "2025-09-04T08:33:42.864Z" },
@@ -4611,19 +4599,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/60/c3/3d1e01e2dba517a91760e4a03e4f20ffc75039a6fe584d0e6f9b5c78fd15/openai_harmony-0.0.8-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:007b0476a1f331f8130783f901f1da6f5a7057af1a4891f1b6a31dec364189b5", size = 3205080, upload-time = "2025-11-05T19:07:05.078Z" },
     { url = "https://files.pythonhosted.org/packages/14/63/119de431572d7c70a7bf1037034a9be6ed0a7502a7498ba7302bca5b3242/openai_harmony-0.0.8-cp38-abi3-win32.whl", hash = "sha256:a9b5f893326b28d9e935ade14b4f655f5a840942473bc89b201c25f7a15af9cf", size = 2082457, upload-time = "2025-11-05T19:07:09.631Z" },
     { url = "https://files.pythonhosted.org/packages/40/1f/c83cf5a206c263ee70448a5ae4264682555f4d0b5bed0d2cc6ca1108103d/openai_harmony-0.0.8-cp38-abi3-win_amd64.whl", hash = "sha256:39d44f0d8f466bd56698e7ead708bead3141e27b9b87e3ab7d5a6d0e4a869ee5", size = 2438369, upload-time = "2025-11-05T19:07:08.1Z" },
-]
-
-[[package]]
-name = "openclaw"
-version = "2026.3.20"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "cmdop" },
-    { name = "pydantic" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/34/01/f8d0b9fa1db36976c3c04c703c9ec0239d1da85ec17d93290f5ac538d730/openclaw-2026.3.20.tar.gz", hash = "sha256:aac042b02e4d040698bf61d64a79332f102a95431c4df1214d4fa3c5c59c7869", size = 2434, upload-time = "2026-03-20T06:18:43.476Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f3/b5/508e36856bf3a741f772b5e38d6c32b3fa977e50752168cba463250dc734/openclaw-2026.3.20-py3-none-any.whl", hash = "sha256:16b84601caa0ec0764ea39284a1c066e829a2fe7f2b8f9f706632ba908c60dfb", size = 2979, upload-time = "2026-03-20T06:18:42.202Z" },
 ]
 
 [[package]]
@@ -6331,10 +6306,10 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "joblib", marker = "python_full_version < '3.11'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "threadpoolctl", marker = "python_full_version < '3.11'" },
+    { name = "joblib" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" } },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" } },
+    { name = "threadpoolctl" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/98/c2/a7855e41c9d285dfe86dc50b250978105dce513d6e459ea66a6aeb0e1e0c/scikit_learn-1.7.2.tar.gz", hash = "sha256:20e9e49ecd130598f1ca38a1d85090e1a600147b9c02fa6f15d69cb53d968fda", size = 7193136, upload-time = "2025-09-09T08:21:29.075Z" }
 wheels = [
@@ -6380,12 +6355,12 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "joblib", marker = "python_full_version >= '3.11'" },
-    { name = "narwhals", marker = "python_full_version >= '3.11'" },
-    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "joblib" },
+    { name = "narwhals" },
+    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "threadpoolctl", marker = "python_full_version >= '3.11'" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "threadpoolctl" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/fa/6f/37092bdb25f712817231799fc5674d8e704066a8a70c1d2d40517e18b4ab/scikit_learn-1.9.0.tar.gz", hash = "sha256:8833266989d3a5110178a9fae30783675460724d0e1efb13b14901d2c660c557", size = 7750767, upload-time = "2026-06-02T11:54:32.706Z" }
 wheels = [
@@ -6418,7 +6393,7 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0f/37/6964b830433e654ec7485e45a00fc9a27cf868d622838f6b6d9c5ec0d532/scipy-1.15.3.tar.gz", hash = "sha256:eae3cf522bc7df64b42cad3925c876e1b0b6c35c1337c93e12c0f366f55b0eaf", size = 59419214, upload-time = "2025-05-08T16:13:05.955Z" }
 wheels = [
@@ -6484,7 +6459,7 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7a/97/5a3609c4f8d58b039179648e62dd220f89864f56f7357f5d4f45c29eb2cc/scipy-1.17.1.tar.gz", hash = "sha256:95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0", size = 30573822, upload-time = "2026-02-23T00:26:24.851Z" }
@@ -6766,23 +6741,23 @@ resolution-markers = [
     "python_full_version >= '3.11.4' and python_full_version < '3.12' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "alabaster", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "babel", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "colorama", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12' and sys_platform == 'win32'" },
-    { name = "docutils", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "imagesize", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "jinja2", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "packaging", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "pygments", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "requests", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "roman-numerals", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "snowballstemmer", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "sphinxcontrib-applehelp", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "sphinxcontrib-devhelp", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "sphinxcontrib-htmlhelp", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "sphinxcontrib-jsmath", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "sphinxcontrib-qthelp", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
-    { name = "sphinxcontrib-serializinghtml", marker = "python_full_version >= '3.11.4' and python_full_version < '3.12'" },
+    { name = "alabaster" },
+    { name = "babel" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "docutils" },
+    { name = "imagesize" },
+    { name = "jinja2" },
+    { name = "packaging" },
+    { name = "pygments" },
+    { name = "requests" },
+    { name = "roman-numerals" },
+    { name = "snowballstemmer" },
+    { name = "sphinxcontrib-applehelp" },
+    { name = "sphinxcontrib-devhelp" },
+    { name = "sphinxcontrib-htmlhelp" },
+    { name = "sphinxcontrib-jsmath" },
+    { name = "sphinxcontrib-qthelp" },
+    { name = "sphinxcontrib-serializinghtml" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/50/a8c6ccc36d5eacdfd7913ddccd15a9cee03ecafc5ee2bc40e1f168d85022/sphinx-9.0.4.tar.gz", hash = "sha256:594ef59d042972abbc581d8baa577404abe4e6c3b04ef61bd7fc2acbd51f3fa3", size = 8710502, upload-time = "2025-12-04T07:45:27.343Z" }
 wheels = [
@@ -6800,23 +6775,23 @@ resolution-markers = [
     "python_full_version == '3.12.*' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "alabaster", marker = "python_full_version >= '3.12'" },
-    { name = "babel", marker = "python_full_version >= '3.12'" },
-    { name = "colorama", marker = "python_full_version >= '3.12' and sys_platform == 'win32'" },
-    { name = "docutils", marker = "python_full_version >= '3.12'" },
-    { name = "imagesize", marker = "python_full_version >= '3.12'" },
-    { name = "jinja2", marker = "python_full_version >= '3.12'" },
-    { name = "packaging", marker = "python_full_version >= '3.12'" },
-    { name = "pygments", marker = "python_full_version >= '3.12'" },
-    { name = "requests", marker = "python_full_version >= '3.12'" },
-    { name = "roman-numerals", marker = "python_full_version >= '3.12'" },
-    { name = "snowballstemmer", marker = "python_full_version >= '3.12'" },
-    { name = "sphinxcontrib-applehelp", marker = "python_full_version >= '3.12'" },
-    { name = "sphinxcontrib-devhelp", marker = "python_full_version >= '3.12'" },
-    { name = "sphinxcontrib-htmlhelp", marker = "python_full_version >= '3.12'" },
-    { name = "sphinxcontrib-jsmath", marker = "python_full_version >= '3.12'" },
-    { name = "sphinxcontrib-qthelp", marker = "python_full_version >= '3.12'" },
-    { name = "sphinxcontrib-serializinghtml", marker = "python_full_version >= '3.12'" },
+    { name = "alabaster" },
+    { name = "babel" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "docutils" },
+    { name = "imagesize" },
+    { name = "jinja2" },
+    { name = "packaging" },
+    { name = "pygments" },
+    { name = "requests" },
+    { name = "roman-numerals" },
+    { name = "snowballstemmer" },
+    { name = "sphinxcontrib-applehelp" },
+    { name = "sphinxcontrib-devhelp" },
+    { name = "sphinxcontrib-htmlhelp" },
+    { name = "sphinxcontrib-jsmath" },
+    { name = "sphinxcontrib-qthelp" },
+    { name = "sphinxcontrib-serializinghtml" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/cd/bd/f08eb0f4eed5c83f1ba2a3bd18f7745a2b1525fad70660a1c00224ec468a/sphinx-9.1.0.tar.gz", hash = "sha256:7741722357dd75f8190766926071fed3bdc211c74dd2d7d4df5404da95930ddb", size = 8718324, upload-time = "2025-12-31T15:09:27.646Z" }
 wheels = [
@@ -7556,79 +7531,79 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "aiohttp", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "anthropic", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "apache-tvm-ffi", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "blake3", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "cachetools", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "cbor2", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "cloudpickle", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "compressed-tensors", version = "0.15.0.1", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "depyf", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "diskcache", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "einops", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "fastapi", version = "0.137.1", source = { registry = "https://pypi.org/simple" }, extra = ["standard"], marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "fastsafetensors", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "filelock", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "flashinfer-cubin", version = "0.6.11.post2", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "flashinfer-python", version = "0.6.11.post2", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "gguf", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "humming-kernels", version = "0.1.2", source = { registry = "https://pypi.org/simple" }, extra = ["cu13"], marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "ijson", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "lark", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "llguidance", marker = "(python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform != 'darwin') or (python_full_version < '3.11' and platform_machine == 'arm64' and sys_platform != 'darwin') or (python_full_version < '3.11' and platform_machine == 'ppc64le' and sys_platform != 'darwin') or (python_full_version < '3.11' and platform_machine == 'x86_64' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and platform_machine == 'aarch64' and sys_platform == 'darwin') or (python_full_version != '3.11.*' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version != '3.11.*' and platform_machine == 'ppc64le' and sys_platform == 'darwin') or (python_full_version != '3.11.*' and platform_machine == 'x86_64' and sys_platform == 'darwin')" },
-    { name = "lm-format-enforcer", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "mcp", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "mistral-common", extra = ["image"], marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "model-hosting-container-standards", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "msgspec", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "ninja", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "numba", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "aiohttp" },
+    { name = "anthropic" },
+    { name = "apache-tvm-ffi" },
+    { name = "blake3" },
+    { name = "cachetools" },
+    { name = "cbor2" },
+    { name = "cloudpickle" },
+    { name = "compressed-tensors", version = "0.15.0.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "depyf" },
+    { name = "diskcache" },
+    { name = "einops" },
+    { name = "fastapi", version = "0.137.1", source = { registry = "https://pypi.org/simple" }, extra = ["standard"] },
+    { name = "fastsafetensors" },
+    { name = "filelock" },
+    { name = "flashinfer-cubin", version = "0.6.11.post2", source = { registry = "https://pypi.org/simple" } },
+    { name = "flashinfer-python", version = "0.6.11.post2", source = { registry = "https://pypi.org/simple" } },
+    { name = "gguf" },
+    { name = "humming-kernels", version = "0.1.2", source = { registry = "https://pypi.org/simple" }, extra = ["cu13"] },
+    { name = "ijson" },
+    { name = "lark" },
+    { name = "llguidance", marker = "platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ppc64le' or platform_machine == 'x86_64'" },
+    { name = "lm-format-enforcer" },
+    { name = "mcp" },
+    { name = "mistral-common", extra = ["image"] },
+    { name = "model-hosting-container-standards" },
+    { name = "msgspec" },
+    { name = "ninja" },
+    { name = "numba" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.12.*' and sys_platform == 'darwin'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform == 'darwin'" },
-    { name = "nvidia-cudnn-frontend", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "nvidia-cutlass-dsl", extra = ["cu13"], marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "openai", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "openai-harmony", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opencv-python-headless", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opentelemetry-api", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opentelemetry-exporter-otlp", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opentelemetry-sdk", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opentelemetry-semantic-conventions-ai", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "outlines-core", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "partial-json-parser", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pillow", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "prometheus-client", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "prometheus-fastapi-instrumentator", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "protobuf", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "psutil", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "py-cpuinfo", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pybase64", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "python-json-logger", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pyyaml", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pyzmq", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "quack-kernels", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "regex", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "requests", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "safetensors", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "sentencepiece", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "setproctitle", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
+    { name = "nvidia-cudnn-frontend", version = "1.18.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "nvidia-cutlass-dsl", extra = ["cu13"] },
+    { name = "openai" },
+    { name = "openai-harmony" },
+    { name = "opencv-python-headless" },
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-exporter-otlp" },
+    { name = "opentelemetry-sdk" },
+    { name = "opentelemetry-semantic-conventions-ai" },
+    { name = "outlines-core" },
+    { name = "partial-json-parser" },
+    { name = "pillow" },
+    { name = "prometheus-client" },
+    { name = "prometheus-fastapi-instrumentator" },
+    { name = "protobuf" },
+    { name = "psutil" },
+    { name = "py-cpuinfo" },
+    { name = "pybase64" },
+    { name = "pydantic" },
+    { name = "python-json-logger" },
+    { name = "pyyaml" },
+    { name = "pyzmq" },
+    { name = "quack-kernels" },
+    { name = "regex" },
+    { name = "requests" },
+    { name = "safetensors" },
+    { name = "sentencepiece" },
+    { name = "setproctitle" },
     { name = "setuptools", marker = "python_full_version >= '3.12' and sys_platform == 'darwin'" },
     { name = "six", marker = "python_full_version >= '3.12' and sys_platform == 'darwin'" },
-    { name = "tiktoken", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tilelang", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tokenizers", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tokenspeed-mla", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torch", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torchaudio", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torchvision", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tqdm", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "transformers", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "typing-extensions", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "watchfiles", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and sys_platform == 'darwin')" },
-    { name = "xgrammar", marker = "(python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform != 'darwin') or (python_full_version < '3.11' and platform_machine == 'arm64' and sys_platform != 'darwin') or (python_full_version < '3.11' and platform_machine == 'ppc64le' and sys_platform != 'darwin') or (python_full_version < '3.11' and platform_machine == 's390x' and sys_platform != 'darwin') or (python_full_version < '3.11' and platform_machine == 'x86_64' and sys_platform != 'darwin') or (python_full_version != '3.11.*' and platform_machine == 'aarch64' and sys_platform == 'darwin') or (python_full_version != '3.11.*' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version != '3.11.*' and platform_machine == 'ppc64le' and sys_platform == 'darwin') or (python_full_version != '3.11.*' and platform_machine == 's390x' and sys_platform == 'darwin') or (python_full_version != '3.11.*' and platform_machine == 'x86_64' and sys_platform == 'darwin')" },
+    { name = "tiktoken" },
+    { name = "tilelang" },
+    { name = "tokenizers" },
+    { name = "tokenspeed-mla" },
+    { name = "torch" },
+    { name = "torchaudio" },
+    { name = "torchvision" },
+    { name = "tqdm" },
+    { name = "transformers" },
+    { name = "typing-extensions" },
+    { name = "watchfiles" },
+    { name = "xgrammar", marker = "platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ppc64le' or platform_machine == 's390x' or platform_machine == 'x86_64'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/84/7c/6c745e218eaffc0fe77480d0fcbbf6835ba655da3691606eba3b8b48cc81/vllm-0.22.1.tar.gz", hash = "sha256:cd34902729f3767e3dfbb391956b2986bc638a54be9893e78bda9cc55669f15c", size = 36246058, upload-time = "2026-06-05T10:12:16.046Z" }
 wheels = [
@@ -7649,78 +7624,78 @@ resolution-markers = [
     "python_full_version >= '3.11' and python_full_version < '3.11.4' and sys_platform != 'darwin'",
 ]
 dependencies = [
-    { name = "aiohttp", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "anthropic", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "apache-tvm-ffi", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "blake3", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "cachetools", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "cbor2", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "cloudpickle", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "compressed-tensors", version = "0.17.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "depyf", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "diskcache", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "einops", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "fastapi", version = "0.136.3", source = { registry = "https://pypi.org/simple" }, extra = ["standard"], marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "fastsafetensors", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "filelock", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "flashinfer-cubin", version = "0.6.12", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "flashinfer-python", version = "0.6.12", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "gguf", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "humming-kernels", version = "0.1.4", source = { registry = "https://pypi.org/simple" }, extra = ["cu13"], marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "ijson", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "lark", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "llguidance", marker = "(python_full_version >= '3.11' and platform_machine == 'aarch64' and sys_platform != 'darwin') or (python_full_version >= '3.11' and platform_machine == 'arm64' and sys_platform != 'darwin') or (python_full_version >= '3.11' and platform_machine == 'ppc64le' and sys_platform != 'darwin') or (python_full_version >= '3.11' and platform_machine == 'x86_64' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and platform_machine == 'aarch64' and sys_platform == 'darwin') or (python_full_version == '3.11.*' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version == '3.11.*' and platform_machine == 'ppc64le' and sys_platform == 'darwin') or (python_full_version == '3.11.*' and platform_machine == 'x86_64' and sys_platform == 'darwin')" },
-    { name = "lm-format-enforcer", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "mcp", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "mistral-common", extra = ["image"], marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "model-hosting-container-standards", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "msgspec", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "ninja", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "numba", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
+    { name = "aiohttp" },
+    { name = "anthropic" },
+    { name = "apache-tvm-ffi" },
+    { name = "blake3" },
+    { name = "cachetools" },
+    { name = "cbor2" },
+    { name = "cloudpickle" },
+    { name = "compressed-tensors", version = "0.17.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "depyf" },
+    { name = "diskcache" },
+    { name = "einops" },
+    { name = "fastapi", version = "0.136.3", source = { registry = "https://pypi.org/simple" }, extra = ["standard"] },
+    { name = "fastsafetensors" },
+    { name = "filelock" },
+    { name = "flashinfer-cubin", version = "0.6.12", source = { registry = "https://pypi.org/simple" } },
+    { name = "flashinfer-python", version = "0.6.12", source = { registry = "https://pypi.org/simple" } },
+    { name = "gguf" },
+    { name = "humming-kernels", version = "0.1.4", source = { registry = "https://pypi.org/simple" }, extra = ["cu13"] },
+    { name = "ijson" },
+    { name = "lark" },
+    { name = "llguidance", marker = "platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ppc64le' or platform_machine == 'x86_64'" },
+    { name = "lm-format-enforcer" },
+    { name = "mcp" },
+    { name = "mistral-common", extra = ["image"] },
+    { name = "model-hosting-container-standards" },
+    { name = "msgspec" },
+    { name = "ninja" },
+    { name = "numba" },
+    { name = "numpy", version = "2.3.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13' or sys_platform == 'darwin'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13' and sys_platform != 'darwin'" },
-    { name = "nvidia-cudnn-frontend", version = "1.25.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "nvidia-cutlass-dsl", extra = ["cu13"], marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "openai", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "openai-harmony", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opencv-python-headless", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opentelemetry-api", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opentelemetry-exporter-otlp", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opentelemetry-sdk", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "opentelemetry-semantic-conventions-ai", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "outlines-core", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "partial-json-parser", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pillow", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "prometheus-client", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "prometheus-fastapi-instrumentator", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "protobuf", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "psutil", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "py-cpuinfo", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pybase64", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pydantic", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "python-json-logger", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pyyaml", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "pyzmq", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "quack-kernels", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "regex", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "requests", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "safetensors", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "sentencepiece", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "setproctitle", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
+    { name = "nvidia-cudnn-frontend", version = "1.25.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "nvidia-cutlass-dsl", extra = ["cu13"] },
+    { name = "openai" },
+    { name = "openai-harmony" },
+    { name = "opencv-python-headless" },
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-exporter-otlp" },
+    { name = "opentelemetry-sdk" },
+    { name = "opentelemetry-semantic-conventions-ai" },
+    { name = "outlines-core" },
+    { name = "partial-json-parser" },
+    { name = "pillow" },
+    { name = "prometheus-client" },
+    { name = "prometheus-fastapi-instrumentator" },
+    { name = "protobuf" },
+    { name = "psutil" },
+    { name = "py-cpuinfo" },
+    { name = "pybase64" },
+    { name = "pydantic" },
+    { name = "python-json-logger" },
+    { name = "pyyaml" },
+    { name = "pyzmq" },
+    { name = "quack-kernels" },
+    { name = "regex" },
+    { name = "requests" },
+    { name = "safetensors" },
+    { name = "sentencepiece" },
+    { name = "setproctitle" },
     { name = "setuptools", marker = "python_full_version >= '3.12' and sys_platform != 'darwin'" },
     { name = "six", marker = "python_full_version >= '3.12' and sys_platform != 'darwin'" },
-    { name = "tiktoken", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tilelang", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tokenizers", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tokenspeed-mla", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torch", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torchaudio", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "torchvision", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "tqdm", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "transformers", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "typing-extensions", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "watchfiles", marker = "(python_full_version >= '3.11' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and sys_platform == 'darwin')" },
-    { name = "xgrammar", marker = "(python_full_version >= '3.11' and platform_machine == 'aarch64' and sys_platform != 'darwin') or (python_full_version >= '3.11' and platform_machine == 'arm64' and sys_platform != 'darwin') or (python_full_version >= '3.11' and platform_machine == 'ppc64le' and sys_platform != 'darwin') or (python_full_version >= '3.11' and platform_machine == 's390x' and sys_platform != 'darwin') or (python_full_version >= '3.11' and platform_machine == 'x86_64' and sys_platform != 'darwin') or (python_full_version == '3.11.*' and platform_machine == 'aarch64' and sys_platform == 'darwin') or (python_full_version == '3.11.*' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version == '3.11.*' and platform_machine == 'ppc64le' and sys_platform == 'darwin') or (python_full_version == '3.11.*' and platform_machine == 's390x' and sys_platform == 'darwin') or (python_full_version == '3.11.*' and platform_machine == 'x86_64' and sys_platform == 'darwin')" },
+    { name = "tiktoken" },
+    { name = "tilelang" },
+    { name = "tokenizers" },
+    { name = "tokenspeed-mla" },
+    { name = "torch" },
+    { name = "torchaudio" },
+    { name = "torchvision" },
+    { name = "tqdm" },
+    { name = "transformers" },
+    { name = "typing-extensions" },
+    { name = "watchfiles" },
+    { name = "xgrammar", marker = "platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ppc64le' or platform_machine == 's390x' or platform_machine == 'x86_64'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/68/c6/c4dc766b09e93de278693502612de0beba822983d4f609830406ead65cc9/vllm-0.23.0.tar.gz", hash = "sha256:760269db3d9611e12e524681df1bca0977d5d2f5fcb4481cc34d33efc4ae7ff5", size = 36624042, upload-time = "2026-06-13T09:27:24.297Z" }
 wheels = [
