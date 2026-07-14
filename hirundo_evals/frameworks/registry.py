@@ -31,7 +31,7 @@ def get_eval_framework_wrapper(
 
         wrapper = InspectWrapper
     elif framework == EvalFramework.PINCHBENCH:
-        from .pinchbench.wrapper import PinchBenchWrapper
+        from .inspect_ai.external.pinchbench.wrapper import PinchBenchWrapper
 
         wrapper = PinchBenchWrapper
     else:
