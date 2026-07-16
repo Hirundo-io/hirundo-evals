@@ -46,7 +46,7 @@ def test_pinchbench_command_passes_mode_and_suite_task_args() -> None:
         "-T",
         "model=ibm-granite/granite-4.1-3b",
         "-T",
-        "output_root=/home/ubuntu/hirundo-research/hirundo-evals/logs/run",
+        f"output_root={Path('logs/run').resolve()}",
         "-T",
         "suite=task_calendar,task_weather",
     ]

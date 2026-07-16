@@ -23,7 +23,7 @@ Example:
 hirundo-evals ibm-granite/granite-4.1-3b pinchbench full \
     --vllm-local \
     --vllm-devices 0 \
-    --vllm-args "--tensor-parallel-size 1"
+    --vllm-args "--tensor-parallel-size 1 --enable-auto-tool-choice --tool-call-parser granite4"
 ```
 
 Multiple suites or tasks are comma-separated:
@@ -45,8 +45,22 @@ PinchBench requires an OpenAI-compatible model endpoint. In the current
 
 When `--vllm-local` is used, Hirundo Evals starts a local OpenAI-compatible
 vLLM server and passes its URL to the Inspect AI adapter. The adapter itself
-handles the Dockerized OpenClaw compatibility layer, so no global OpenClaw
-installation or vLLM tool-call parser flags are required.
+handles the Dockerized OpenClaw compatibility layer.
+
+## Enabling Tool Use
+
+PinchBench tasks use tools, so vLLM must enable automatic tool selection and
+configure a parser for the served model. For IBM Granite 4 models, use:
+
+```bash
+--vllm-args "--tensor-parallel-size 1 --enable-auto-tool-choice --tool-call-parser granite4"
+```
+
+The `granite4` parser is specific to Granite 4 models. Other models require
+their corresponding vLLM tool-call parser; see the
+[vLLM tool-calling documentation](https://docs.vllm.ai/en/stable/features/tool_calling/).
+Without these flags, the model request fails with an error similar to:
+`"auto" tool choice requires --enable-auto-tool-choice and --tool-call-parser`.
 
 ## Outputs
 
