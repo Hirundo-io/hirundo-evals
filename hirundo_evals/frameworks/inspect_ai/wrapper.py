@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, TypedDict
 from bidict import bidict
 
 from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
+
 from ._utils import load_eval_logs, log_runtime
 
 if TYPE_CHECKING:

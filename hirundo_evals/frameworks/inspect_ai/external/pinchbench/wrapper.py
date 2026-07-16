@@ -6,9 +6,7 @@ from hirundo_evals.frameworks.inspect_ai.external._base import InspectExternalWr
 class PinchBenchWrapper(InspectExternalWrapper):
     """Run PinchBench through the pinned Inspect AI adapter."""
 
-    INSPECT_WRAPPER_REPO = (
-        "https://github.com/zytoh0/pinch-wildclawbench-inspect.git"
-    )
+    INSPECT_WRAPPER_REPO = "https://github.com/zytoh0/pinch-wildclawbench-inspect.git"
     INSPECT_WRAPPER_COMMIT = "c7d22166667c38e4a831183045b65091dcc7120a"
     BENCHMARK_REPO = "https://github.com/pinchbench/skill.git"
     BENCHMARK_COMMIT = "819384ae830492365b8363fc26bc2602e73f216d"
@@ -35,8 +33,15 @@ class PinchBenchWrapper(InspectExternalWrapper):
                 mode = "subset"
                 suite = ",".join(self.tasks)
 
-        args = ["-T", f"mode={mode}", "-T", f"model={model_id}"]
+        args = [
+            "-T",
+            f"mode={mode}",
+            "-T",
+            f"model={model_id}",
+            "-T",
+            f"output_root={Path(self.log_dir).resolve()}",
+        ]
         if suite:
             args.extend(["-T", f"suite={suite}"])
-        return args
 
+        return args

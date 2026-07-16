@@ -6,9 +6,7 @@ from hirundo_evals.frameworks.inspect_ai.external.pinchbench.wrapper import (
 
 
 def test_pinchbench_command_uses_inspect_wrapper() -> None:
-    wrapper = PinchBenchWrapper(
-        "ibm-granite/granite-4.1-3b", ["all"], "logs/run"
-    )
+    wrapper = PinchBenchWrapper("ibm-granite/granite-4.1-3b", ["all"], "logs/run")
 
     cmd = wrapper.get_cli_cmd(
         model="openai/ibm-granite/granite-4.1-3b",
@@ -16,14 +14,16 @@ def test_pinchbench_command_uses_inspect_wrapper() -> None:
         extra=["--limit", "1"],
     )
 
-    assert cmd[:6] == [
+    assert cmd[:7] == [
         "uv",
         "run",
+        "--with",
+        "openai",
         "inspect",
         "eval",
         "src/pinchbench/pinchbench.py@pinchbench",
-        "--model",
     ]
+    assert cmd[cmd.index("inspect") + 1] == "eval"
     assert cmd[cmd.index("--model") + 1] == "openai/ibm-granite/granite-4.1-3b"
     assert cmd[cmd.index("--model-base-url") + 1] == "http://localhost:8000/v1"
     assert cmd[cmd.index("-T") + 1] == "mode=full"
@@ -40,11 +40,13 @@ def test_pinchbench_command_passes_mode_and_suite_task_args() -> None:
     cmd = wrapper.get_cli_cmd(model_base_url="http://localhost:8000/v1")
 
     task_args = cmd[cmd.index("-T") :]
-    assert task_args[:6] == [
+    assert task_args[:8] == [
         "-T",
         "mode=subset",
         "-T",
         "model=ibm-granite/granite-4.1-3b",
+        "-T",
+        "output_root=/home/ubuntu/hirundo-research/hirundo-evals/logs/run",
         "-T",
         "suite=task_calendar,task_weather",
     ]

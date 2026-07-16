@@ -5,7 +5,11 @@ import subprocess
 from pathlib import Path
 
 from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
-from .._utils import load_eval_logs, log_runtime, score_metric_value
+from hirundo_evals.frameworks.inspect_ai._utils import (
+    load_eval_logs,
+    log_runtime,
+    score_metric_value,
+)
 
 
 class InspectExternalWrapper(BaseEvalFrameworkWrapper):
@@ -23,6 +27,7 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
     API_KEY_ENV: str | None = None
     INSPECT_TASK: str
     FRAMEWORK_NAME: str
+    REPOSITORY_CACHE_ENV = "HIRUNDO_EVALS_CACHE_DIR"
     API_KEY = "vllm-local"
     SCORE_IS_PERCENTAGE = True
     SCORE_IS_NORMALIZED = True
@@ -38,6 +43,7 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
             raise RuntimeError(
                 f"`{command}` is required for {cls.FRAMEWORK_NAME}. Install it and retry."
             )
+
         return command
 
     def task_args(self, model_id: str) -> list[str]:
@@ -55,6 +61,7 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
             environment[self.MODEL_ENV] = model_id
         if self.API_KEY_ENV:
             environment[self.API_KEY_ENV] = self.API_KEY
+
         return environment
 
     def get_cli_cmd(
@@ -68,9 +75,12 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
                 f"{self.FRAMEWORK_NAME} requires an OpenAI-compatible model base URL."
             )
         model_id = self._model_id(model or self.model)
+
         return [
             "uv",
             "run",
+            "--with",
+            "openai",
             "inspect",
             "eval",
             self.INSPECT_TASK,
@@ -87,6 +97,11 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
         ]
 
     def _clone_at(self, repo: str, commit: str, destination: Path) -> None:
+        if destination.is_dir():
+            logging.info("Using existing repository copy at %s", destination)
+            return
+
+        destination.parent.mkdir(parents=True, exist_ok=True)
         git = self._require_tool("git")
         subprocess.run(  # noqa: S603
             [git, "clone", repo, str(destination)],
@@ -96,12 +111,27 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
             [git, "-C", str(destination), "checkout", commit], check=True
         )
 
+    def _repository_cache_path(self, name: str, commit: str) -> Path:
+        cache_root = os.environ.get(self.REPOSITORY_CACHE_ENV)
+        if cache_root is None:
+            cache_root = os.environ.get("XDG_CACHE_HOME")
+        if cache_root is None:
+            cache_root = str(Path.home() / ".cache")
+        return (
+            Path(cache_root).expanduser().resolve()
+            / "hirundo-evals"
+            / self.FRAMEWORK_NAME
+            / f"{name}-{commit}"
+        )
+
     def _benchmark_root(self) -> Path:
         root = os.environ.get(self.BENCHMARK_ROOT_ENV)
         if root:
             benchmark_root = Path(root).expanduser().resolve()
         elif self.BENCHMARK_REPO and self.BENCHMARK_COMMIT:
-            benchmark_root = Path(self.log_dir) / f"{self.FRAMEWORK_NAME}-benchmark"
+            benchmark_root = self._repository_cache_path(
+                "benchmark", self.BENCHMARK_COMMIT
+            )
             self._clone_at(self.BENCHMARK_REPO, self.BENCHMARK_COMMIT, benchmark_root)
         else:
             raise ValueError(
@@ -116,15 +146,19 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
             raise ValueError(
                 f"{self.BENCHMARK_ROOT_ENV} does not contain {required_path}"
             )
+
         return benchmark_root
 
     def _wrapper_root(self) -> Path:
-        wrapper_root = Path(self.log_dir) / f"{self.FRAMEWORK_NAME}-inspect"
+        wrapper_root = self._repository_cache_path(
+            "inspect", self.INSPECT_WRAPPER_COMMIT
+        )
         self._clone_at(
             self.INSPECT_WRAPPER_REPO,
             self.INSPECT_WRAPPER_COMMIT,
             wrapper_root,
         )
+
         return wrapper_root
 
     def run(
@@ -181,4 +215,5 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
             logging.warning(
                 "No %s Inspect AI logs found in %s", self.FRAMEWORK_NAME, self.log_dir
             )
+
         return results

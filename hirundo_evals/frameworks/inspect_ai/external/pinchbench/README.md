@@ -51,8 +51,9 @@ installation or vLLM tool-call parser flags are required.
 ## Outputs
 
 Inspect AI JSON logs and the adapter's native artifacts are written to the run
-log directory. The cloned Inspect wrapper and, when needed, PinchBench checkout
-are stored there as well.
+log directory. The pinned Inspect wrapper and, when needed, PinchBench checkout
+are reused from the persistent cache at `~/.cache/hirundo-evals` (or
+`$XDG_CACHE_HOME/hirundo-evals`). Set `HIRUNDO_EVALS_CACHE_DIR` to override it.
 
 After the run, the adapter exports the Inspect AI aggregate score into the
 `hirundo-evals` summary CSV.
