@@ -97,12 +97,63 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
         ]
 
     def _clone_at(self, repo: str, commit: str, destination: Path) -> None:
-        if destination.is_dir():
-            logging.info("Using existing repository copy at %s", destination)
-            return
-
         destination.parent.mkdir(parents=True, exist_ok=True)
         git = self._require_tool("git")
+
+        if destination.is_dir():
+            try:
+                head = subprocess.run(  # noqa: S603
+                    [git, "-C", str(destination), "rev-parse", "HEAD"],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                ).stdout.strip()
+                status = subprocess.run(  # noqa: S603
+                    [git, "-C", str(destination), "status", "--porcelain"],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                ).stdout
+                if head == commit and not status:
+                    logging.info("Using existing repository copy at %s", destination)
+                    return
+
+                logging.info(
+                    "Refreshing repository copy at %s to commit %s",
+                    destination,
+                    commit,
+                )
+                subprocess.run(  # noqa: S603
+                    [git, "-C", str(destination), "fetch", "--force", "origin", commit],
+                    check=True,
+                )
+                subprocess.run(  # noqa: S603
+                    [
+                        git,
+                        "-C",
+                        str(destination),
+                        "checkout",
+                        "--detach",
+                        "--force",
+                        commit,
+                    ],
+                    check=True,
+                )
+                subprocess.run(  # noqa: S603
+                    [git, "-C", str(destination), "clean", "-fdx"],
+                    check=True,
+                )
+                return
+            except (OSError, subprocess.CalledProcessError):
+                logging.warning(
+                    "Repository copy at %s is invalid; re-cloning it",
+                    destination,
+                )
+                if destination.is_symlink():
+                    destination.unlink()
+                else:
+                    shutil.rmtree(destination)
+
         subprocess.run(  # noqa: S603
             [git, "clone", repo, str(destination)],
             check=True,
@@ -112,11 +163,12 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
         )
 
     def _repository_cache_path(self, name: str, commit: str) -> Path:
-        cache_root = os.environ.get(self.REPOSITORY_CACHE_ENV)
-        if cache_root is None:
-            cache_root = os.environ.get("XDG_CACHE_HOME")
-        if cache_root is None:
-            cache_root = str(Path.home() / ".cache")
+        cache_root = (
+            os.environ.get(self.REPOSITORY_CACHE_ENV)
+            or os.environ.get("XDG_CACHE_HOME")
+            or str(Path.home() / ".cache")
+        )
+
         return (
             Path(cache_root).expanduser().resolve()
             / "hirundo-evals"
@@ -188,9 +240,27 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
         results: list[OutputEntry] = []
         run_id = Path(self.log_dir).name
         for log in load_eval_logs(self.log_dir):
-            if not log.results or not log.results.scores:
-                continue
             runtime = log_runtime(log)
+            if log.status != "success":
+                results.extend(
+                    self._failure_output_entries(
+                        self.FRAMEWORK_NAME,
+                        self.FRAMEWORK_NAME,
+                        log.status,
+                        runtime,
+                    )
+                )
+                continue
+            if not log.results or not log.results.scores:
+                results.extend(
+                    self._failure_output_entries(
+                        self.FRAMEWORK_NAME,
+                        self.FRAMEWORK_NAME,
+                        "no scores",
+                        runtime,
+                    )
+                )
+                continue
             for score in log.results.scores:
                 value = score_metric_value(score)
                 if value is None:

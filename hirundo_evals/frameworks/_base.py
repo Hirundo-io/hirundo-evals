@@ -90,6 +90,29 @@ class BaseEvalFrameworkWrapper(ABC):
         """
         return vllm_args
 
+    def _failure_output_entries(
+        self,
+        framework: str,
+        benchmark: str,
+        status: str,
+        runtime: float | str,
+        metric_names: list[str] | None = None,
+    ) -> list[OutputEntry]:
+        """Build CSV rows for a failed evaluation log."""
+        return [
+            OutputEntry(
+                {
+                    "Run ID": Path(self.log_dir).name,
+                    "Framework": framework,
+                    "Benchmark": benchmark,
+                    "Metric": metric_name,
+                    "Score": f"Failed ({status})",
+                    "Runtime (sec)": runtime,
+                }
+            )
+            for metric_name in (metric_names or ["status"])
+        ]
+
     @abstractmethod
     def prepare_results(self) -> list[OutputEntry]:
         """

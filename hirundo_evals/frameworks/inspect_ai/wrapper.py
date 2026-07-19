@@ -232,17 +232,26 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             status = log.status
             # Extract runtime from log.stats if available
             runtime = log_runtime(log)
+            if status != "success":
+                results.extend(
+                    self._failure_output_entries(
+                        "inspect-ai",
+                        alias,
+                        status,
+                        runtime,
+                        [metric["name"] for metric in target_metrics]
+                        if target_metrics
+                        else None,
+                    )
+                )
+                logging.info(f"Task: {alias} | Status: {status} | Runtime: {runtime}")
+                continue
+
             # Initialize the scores
             score_values: dict[str, float | str] = {}
             # If the task completed successfully, extract the targeted metrics
             # Otherwise, fill the score_values with the status
-            if status != "success":
-                if not target_metrics:
-                    score_values["status"] = f"Failed ({status})"
-                else:
-                    for target_metric in target_metrics:
-                        score_values[target_metric["name"]] = f"Failed ({status})"
-            elif log.results and log.results.scores:
+            if log.results and log.results.scores:
                 # inspect_ai stores metrics inside score objects
                 if not target_metrics:
                     add_scorer_prefix = len(log.results.scores) > 1
