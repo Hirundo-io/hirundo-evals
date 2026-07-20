@@ -10,6 +10,7 @@ from hirundo_evals.frameworks.inspect_ai._utils import (
     log_runtime,
     score_metric_value,
 )
+from hirundo_evals.utils.cli import clean_cli_args
 
 
 class InspectExternalWrapper(BaseEvalFrameworkWrapper):
@@ -76,7 +77,7 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
             )
         model_id = self._model_id(model or self.model)
 
-        return [
+        cmd = [
             "uv",
             "run",
             "--with",
@@ -93,8 +94,13 @@ class InspectExternalWrapper(BaseEvalFrameworkWrapper):
             "--log-format",
             "json",
             *self.task_args(model_id),
-            *(extra or []),
         ]
+        clean_extra = clean_cli_args(
+            extra, ["--model", "--model-base-url", "--log-dir", "--log-format"]
+        )
+        cmd.extend(clean_extra)
+
+        return cmd
 
     def _clone_at(self, repo: str, commit: str, destination: Path) -> None:
         destination.parent.mkdir(parents=True, exist_ok=True)
