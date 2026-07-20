@@ -3,7 +3,6 @@ import contextlib
 import http.client
 import logging
 import os
-import shlex
 import signal
 import sys
 import time
@@ -55,7 +54,7 @@ async def _terminate_process_group(
 
 @contextlib.asynccontextmanager
 async def serve_vllm(
-    model: str, vllm_args: str | None = None, port: int = 8000, timeout: int = 600
+    model: str, vllm_args: list[str] | None = None, port: int = 8000, timeout: int = 600
 ):
     """
     Context manager to start and stop a local vLLM OpenAI-compatible server.
@@ -76,7 +75,7 @@ async def serve_vllm(
         str(port),
     ]
     if vllm_args:
-        cmd.extend(shlex.split(vllm_args))
+        cmd.extend(vllm_args)
 
     server_url = f"http://localhost:{port}/v1"
     if await asyncio.to_thread(_is_server_ready, f"{server_url}/models"):
