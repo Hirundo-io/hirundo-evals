@@ -132,7 +132,7 @@ async def run_with_vllm(
 def run_evaluation(
     model: str,
     framework: EvalFramework,
-    tasks: list[str],
+    tasks: str | list[str],
     output_dir: Path = Path("logs"),
     framework_cli_args: str | list[str] | None = None,
     model_base_url: str | None = None,
@@ -162,6 +162,8 @@ def run_evaluation(
         format="%(asctime)s %(levelname)-8s %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
+    # Parse the tasks
+    tasks = [tasks] if isinstance(tasks, str) else tasks
     # Create the output and log directories
     output_dir, log_dir = _parse_output_and_log_dirs(output_dir, model)
     logging.info(

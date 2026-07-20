@@ -56,7 +56,6 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             "livecodebench": "inspect_evals/livecodebench_pro",
             "mmlu-pro": "inspect_evals/mmlu_pro",
             "scicode": "inspect_evals/scicode",
-            "xstest": "inspect_evals/xstest",
         }
     )
     FINAL_METRICS_BY_BENCHMARK = {
