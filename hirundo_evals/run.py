@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING, Annotated
 import typer
 
 from .frameworks.registry import EvalFramework, get_eval_framework_wrapper
-from .vllm_server import serve_vllm
+from .utils.vllm import serve_vllm
 
 if TYPE_CHECKING:
-    from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper
+    from .frameworks._base import BaseEvalFrameworkWrapper
 
 app = typer.Typer(
     help="Hirundo Evals: A CLI for running LLM evaluations through framework adapters."
