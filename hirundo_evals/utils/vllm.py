@@ -8,6 +8,8 @@ import sys
 import time
 import urllib.parse
 
+from .cli import clean_cli_args
+
 
 def _is_server_ready(url: str) -> bool:
     try:
@@ -74,8 +76,8 @@ async def serve_vllm(
         "--port",
         str(port),
     ]
-    if vllm_args:
-        cmd.extend(vllm_args)
+    clean_vllm_args = clean_cli_args(vllm_args, ["--model", "--port"])
+    cmd.extend(clean_vllm_args)
 
     server_url = f"http://localhost:{port}/v1"
     if await asyncio.to_thread(_is_server_ready, f"{server_url}/models"):

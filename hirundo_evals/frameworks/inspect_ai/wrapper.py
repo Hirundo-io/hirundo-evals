@@ -8,6 +8,7 @@ from bidict import bidict
 from inspect_ai.log import EvalLog
 
 from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
+from hirundo_evals.utils.cli import clean_cli_args
 
 
 class InspectScore(TypedDict):
@@ -199,8 +200,10 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         ]
         if model_base_url:
             cmd.extend(["--model-base-url", model_base_url])
-        if extra:
-            cmd.extend(extra)
+        clean_extra = clean_cli_args(
+            extra, ["--model", "--model-base-url", "--log-dir", "--log-format"]
+        )
+        cmd.extend(clean_extra)
 
         return cmd
 
