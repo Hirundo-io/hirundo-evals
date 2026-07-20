@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import shlex
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated
@@ -47,9 +48,43 @@ def _parse_tasks(tasks: str) -> list[str]:
     return parsed_tasks
 
 
+def _parse_output_and_log_dirs(output_dir: Path, model: str) -> tuple[Path, Path]:
+    """
+    Parse the output and log directories from the command line argument.
+
+    Args:
+        output_dir: The directory to save the outputs.
+        model: The model to evaluate.
+
+    Returns:
+        The output and log directories.
+    """
+    output_dir = output_dir / Path(
+        *Path(os.path.abspath(model) if model.startswith(".") else model).parts[-2:]
+    )
+    log_dir = output_dir / datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    return output_dir, log_dir
+
+
+def _parse_cli_args(cli_args: str | list[str] | None) -> list[str] | None:
+    """
+    Parse the CLI arguments from the command line argument.
+
+    Args:
+        cli_args: The CLI arguments to parse.
+
+    Returns:
+        The parsed CLI arguments.
+    """
+    return shlex.split(cli_args) if isinstance(cli_args, str) else cli_args
+
+
 async def run_with_vllm(
     framework_wrapper: "BaseEvalFrameworkWrapper",
-    vllm_args: str | None,
+    vllm_args: list[str] | None,
     vllm_devices: str | None,
     vllm_port: int,
     framework_args: list[str] | None = None,
@@ -74,7 +109,7 @@ async def run_with_vllm(
     try:
         async with serve_vllm(
             framework_wrapper.model,
-            framework_wrapper.get_vllm_args(vllm_args),
+            vllm_args,
             port=vllm_port,
         ) as server_url:
             # Map the model to use the local OpenAI compatible endpoint
@@ -94,6 +129,83 @@ async def run_with_vllm(
                 os.environ.pop("CUDA_VISIBLE_DEVICES", None)
             else:
                 os.environ["CUDA_VISIBLE_DEVICES"] = previous_cuda_visible_devices
+
+
+def run_evaluation(
+    model: str,
+    framework: EvalFramework,
+    tasks: list[str],
+    output_dir: Path = Path("logs"),
+    framework_cli_args: str | list[str] | None = None,
+    model_base_url: str | None = None,
+    run_with_local_vllm: bool = False,
+    vllm_cli_args: str | list[str] | None = None,
+    vllm_devices: str | int | list[int] | None = None,
+    vllm_port: int = 8000,
+) -> None:
+    """
+    Run an evaluation.
+
+    Args:
+        model: The model to evaluate.
+        framework: The evaluation framework to use.
+        tasks: The tasks to evaluate.
+        output_dir: The directory to save the outputs.
+        framework_cli_args: Additional arguments to pass to the framework.
+        model_base_url: The base URL of the model.
+        run_with_local_vllm: Whether to run the evaluation with a local vLLM server.
+        vllm_cli_args: Additional arguments for the vLLM server.
+        vllm_devices: CUDA device IDs for local vLLM server (e.g. '0' or '0,1').
+        vllm_port: Port for the local vLLM server.
+    """
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)-8s %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    # Create the output and log directories
+    output_dir, log_dir = _parse_output_and_log_dirs(output_dir, model)
+    logging.info(
+        f"🚀 Starting evaluation suite on {len(tasks)} tasks: {', '.join(tasks)}"
+    )
+    # Parse the framework CLI arguments
+    framework_args = _parse_cli_args(framework_cli_args)
+    logging.info(f"🧠 Model: {model}")
+    logging.info(f"📁 Log Directory: {log_dir}")
+    logging.info(f"📊 CSV Output: {output_dir / 'results.csv'}")
+    # Get the evaluation framework wrapper
+    framework_wrapper = get_eval_framework_wrapper(framework, model, tasks, log_dir)
+    if not framework_wrapper.SUPPORTS_UNSERVED_MODELS and not run_with_local_vllm:
+        logging.warning(
+            "The framework does not support unserved models, but --vllm-local/run_with_local_vllm is not specified. "
+            "Running with a local vLLM server..."
+        )
+        run_with_local_vllm = True
+    # Run the evaluation
+    if run_with_local_vllm:
+        # Parse the vLLM CLI arguments
+        vllm_args = _parse_cli_args(vllm_cli_args)
+        # Parse the vLLM devices
+        vllm_devices = (
+            str(vllm_devices)
+            if isinstance(vllm_devices, int)
+            else vllm_devices
+            if isinstance(vllm_devices, str | None)
+            else ",".join(map(str, vllm_devices))
+        )
+        # Run the evaluation with a local vLLM server
+        asyncio.run(
+            run_with_vllm(
+                framework_wrapper, vllm_args, vllm_devices, vllm_port, framework_args
+            )
+        )
+    else:
+        # Run the evaluation without a local vLLM server
+        framework_wrapper.run(model_base_url=model_base_url, extra=framework_args)
+    logging.info(f"✅ Evaluation complete! Logs saved to: {log_dir}")
+    # Export the results to a CSV file
+    framework_wrapper.export_results(os.path.join(output_dir, "results.csv"))
 
 
 @app.command(
@@ -122,6 +234,13 @@ def main(
             help="Directory for framework raw outputs/logs and summary CSV",
         ),
     ] = Path("logs"),
+    model_base_url: Annotated[
+        str | None,
+        typer.Option(
+            "--model-base-url",
+            help="The base URL of the model.",
+        ),
+    ] = None,
     vllm_local: Annotated[
         bool,
         typer.Option(
@@ -159,12 +278,6 @@ def main(
     CLI format:
         hirundo-evals [MODEL] [FRAMEWORK] [TASK[,TASK...]] [FRAMEWORK_OPTIONS]
     """
-    # Configure logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)-8s %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
     # Validate the framework
     try:
         framework = EvalFramework(framework)
@@ -175,43 +288,19 @@ def main(
         ) from None
     # Parse the tasks
     parsed_tasks = _parse_tasks(tasks)
-    # Create the output directories
-    output_dir = output_dir / Path(
-        *Path(os.path.abspath(model) if model.startswith(".") else model).parts[-2:]
-    )
-    log_dir = output_dir / datetime.now().strftime("%Y%m%d_%H%M%S")
-    os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(log_dir, exist_ok=True)
-    logging.info(
-        f"🚀 Starting evaluation suite on {len(parsed_tasks)} tasks: {', '.join(parsed_tasks)}"
-    )
-    logging.info(f"🧠 Model: {model}")
-    logging.info(f"📁 Log Directory: {log_dir}")
-    logging.info(f"📊 CSV Output: {output_dir / 'results.csv'}")
-    # Get the evaluation framework wrapper
-    framework_wrapper = get_eval_framework_wrapper(
-        framework, model, parsed_tasks, log_dir
-    )
-    if not framework_wrapper.SUPPORTS_UNSERVED_MODELS and not vllm_local:
-        logging.warning(
-            "The framework does not support unserved models, but --vllm-local is not specified. "
-            "Running with a local vLLM server..."
-        )
-        vllm_local = True
     # Run the evaluation
-    if vllm_local:
-        # Run the evaluation with a local vLLM server
-        asyncio.run(
-            run_with_vllm(
-                framework_wrapper, vllm_args, vllm_devices, vllm_port, ctx.args
-            )
-        )
-    else:
-        # Run the evaluation without a local vLLM server
-        framework_wrapper.run(extra=ctx.args)
-    logging.info(f"✅ Evaluation Suite Complete! Logs saved to: {log_dir}")
-    # Export the results to a CSV file
-    framework_wrapper.export_results(os.path.join(output_dir, "results.csv"))
+    run_evaluation(
+        model,
+        framework,
+        parsed_tasks,
+        output_dir,
+        framework_cli_args=ctx.args,
+        model_base_url=model_base_url,
+        run_with_local_vllm=vllm_local,
+        vllm_cli_args=vllm_args,
+        vllm_devices=vllm_devices,
+        vllm_port=vllm_port,
+    )
 
 
 if __name__ == "__main__":

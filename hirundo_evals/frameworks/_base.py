@@ -77,19 +77,6 @@ class BaseEvalFrameworkWrapper(ABC):
         cmd = self.get_cli_cmd(model, model_base_url, extra)
         subprocess.run(cmd, check=True)  # noqa: S603
 
-    def get_vllm_args(self, vllm_args: str | None = None) -> str | None:
-        """
-        Return framework-specific vLLM server arguments.
-        Used to add required framework-specific arguments to the vLLM server.
-
-        Args:
-            vllm_args: Extra arguments to pass to the vLLM server.
-
-        Returns:
-            The framework-specific vLLM server arguments.
-        """
-        return vllm_args
-
     def _failure_output_entries(
         self,
         framework: str,
