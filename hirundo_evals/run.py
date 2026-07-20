@@ -232,7 +232,7 @@ def main(
         str | None,
         typer.Option(
             "--model-base-url",
-            help="The base URL of the model.",
+            help="The base URL of the model. Required if the model is hosted externally.",
         ),
     ] = None,
     vllm_local: Annotated[
