@@ -85,7 +85,19 @@ class BaseEvalFrameworkWrapper(ABC):
         runtime: float | str,
         metric_names: list[str] | None = None,
     ) -> list[OutputEntry]:
-        """Build CSV rows for a failed evaluation log."""
+        """
+        Build CSV rows for a failed evaluation log.
+
+        Args:
+            framework: Name of the evaluation framework.
+            benchmark: Name of the benchmark.
+            status: Failure status from the evaluation log.
+            runtime: Evaluation runtime in seconds, or "N/A".
+            metric_names: Optional metric names to include in the output.
+
+        Returns:
+            CSV rows containing the failure status for each metric.
+        """
         return [
             OutputEntry(
                 {

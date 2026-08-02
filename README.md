@@ -83,8 +83,8 @@ Supported frameworks currently include Inspect AI and the Inspect AI PinchBench 
 
 For adapter-specific details, see the relevant framework documentation:
 
-- Inspect AI: `hirundo_evals/frameworks/inspect_ai/README.md`
-- PinchBench: `hirundo_evals/frameworks/inspect_ai/external/pinchbench/README.md`
+- [Inspect AI](hirundo_evals/frameworks/inspect_ai/README.md)
+- [PinchBench](hirundo_evals/frameworks/inspect_ai/external/pinchbench/README.md)
 
 ## Contributing
 
