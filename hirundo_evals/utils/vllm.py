@@ -54,6 +54,16 @@ async def _terminate_process_group(
         await process.wait()
 
 
+async def _cleanup_vllm_process(process: asyncio.subprocess.Process) -> None:
+    cleanup_task = asyncio.create_task(_terminate_process_group(process))
+    try:
+        await asyncio.shield(cleanup_task)
+    except asyncio.CancelledError:
+        # Complete cleanup before propagating cancellation.
+        await cleanup_task
+        raise
+
+
 @contextlib.asynccontextmanager
 async def serve_vllm(
     model: str, vllm_args: list[str] | None = None, port: int = 8000, timeout: int = 600
@@ -92,24 +102,25 @@ async def serve_vllm(
         start_new_session=True,
     )
 
-    # Poll for server readiness
-    start_time = time.monotonic()
-    while time.monotonic() - start_time < timeout:
-        if process.returncode is not None:
-            raise RuntimeError(
-                f"vLLM server process exited before becoming ready "
-                f"(exit code {process.returncode})"
-            )
-        if await asyncio.to_thread(_is_server_ready, f"{server_url}/models"):
-            break
-        await asyncio.sleep(1)
-    else:
-        await _terminate_process_group(process)
-        raise RuntimeError(f"❌ vLLM server failed to start within {timeout} seconds")
-
     try:
+        # Poll for server readiness.
+        start_time = time.monotonic()
+        while time.monotonic() - start_time < timeout:
+            if process.returncode is not None:
+                raise RuntimeError(
+                    f"vLLM server process exited before becoming ready "
+                    f"(exit code {process.returncode})"
+                )
+            if await asyncio.to_thread(_is_server_ready, f"{server_url}/models"):
+                break
+            await asyncio.sleep(1)
+        else:
+            raise RuntimeError(
+                f"❌ vLLM server failed to start within {timeout} seconds"
+            )
+
         yield server_url
     finally:
         logging.info("🛑 Shutting down managed vLLM server...")
-        await _terminate_process_group(process)
+        await _cleanup_vllm_process(process)
         logging.info("✅ Server safely terminated.")

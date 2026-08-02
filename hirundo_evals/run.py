@@ -48,13 +48,16 @@ def _parse_tasks(tasks: str) -> list[str]:
     return parsed_tasks
 
 
-def _parse_output_and_log_dirs(output_dir: Path, model: str) -> tuple[Path, Path]:
+def _create_output_and_log_dirs(
+    output_dir: Path, model: str, framework: EvalFramework
+) -> tuple[Path, Path]:
     """
-    Parse the output and log directories from the command line argument.
+    Parse and create the output and log directories from the command line argument.
 
     Args:
         output_dir: The directory to save the outputs.
         model: The model to evaluate.
+        framework: The evaluation framework to use.
 
     Returns:
         The output and log directories.
@@ -62,7 +65,7 @@ def _parse_output_and_log_dirs(output_dir: Path, model: str) -> tuple[Path, Path
     output_dir = output_dir / Path(
         *Path(os.path.abspath(model) if model.startswith(".") else model).parts[-2:]
     )
-    log_dir = output_dir / datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_dir = output_dir / framework.value / datetime.now().strftime("%Y%m%d_%H%M%S")
     output_dir.mkdir(parents=True, exist_ok=True)
     log_dir.mkdir(parents=True, exist_ok=True)
 
@@ -134,7 +137,7 @@ async def run_with_vllm(
 def run_evaluation(
     model: str,
     framework: EvalFramework,
-    tasks: list[str],
+    tasks: str | list[str],
     output_dir: Path = Path("logs"),
     framework_cli_args: str | list[str] | None = None,
     model_base_url: str | None = None,
@@ -164,8 +167,10 @@ def run_evaluation(
         format="%(asctime)s %(levelname)-8s %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
+    # Parse the tasks
+    tasks = [tasks] if isinstance(tasks, str) else tasks
     # Create the output and log directories
-    output_dir, log_dir = _parse_output_and_log_dirs(output_dir, model)
+    output_dir, log_dir = _create_output_and_log_dirs(output_dir, model, framework)
     logging.info(
         f"🚀 Starting evaluation suite on {len(tasks)} tasks: {', '.join(tasks)}"
     )
@@ -219,7 +224,7 @@ def main(
         typer.Argument(
             help=(
                 f"The evaluation framework to use. Currently supports: "
-                f"({', '.join(e.value for e in EvalFramework)})"
+                f"({', '.join(framework.value for framework in EvalFramework)})"
             ),
         ),
     ],
@@ -238,7 +243,10 @@ def main(
         str | None,
         typer.Option(
             "--model-base-url",
-            help="The base URL of the model.",
+            help=(
+                "Optional base URL for the model. "
+                "Required when the model is hosted externally."
+            ),
         ),
     ] = None,
     vllm_local: Annotated[
@@ -284,7 +292,7 @@ def main(
     except ValueError:
         raise typer.BadParameter(
             f"Framework '{framework}' is not supported. "
-            f"Currently supported frameworks: {', '.join(e.value for e in EvalFramework)}"
+            f"Currently supported frameworks: {', '.join(framework.value for framework in EvalFramework)}"
         ) from None
     # Parse the tasks
     parsed_tasks = _parse_tasks(tasks)

@@ -13,13 +13,13 @@ An evaluation CLI for running LLM benchmarks through pluggable framework adapter
 ```bash
 uv venv .venv
 source .venv/bin/activate
-uv pip install --python .venv/bin/python -e .
+uv sync
 ```
 
 Install vLLM support when you need managed local serving:
 
 ```bash
-uv pip install --python .venv/bin/python -e ".[vllm]"
+uv sync --extra vllm
 ```
 
 ## Usage
@@ -59,9 +59,11 @@ hirundo-evals MODEL FRAMEWORK TASK \
 
 When supported by the selected adapter, the managed vLLM path starts a local OpenAI-compatible server, sets a temporary dummy `OPENAI_API_KEY`, and routes the evaluation through the local server URL.
 
+Supports Hugging Face model IDs and local Hugging Face model directories only.
+
 ### Outputs
 
-By default, outputs are written under `logs/<model>/<run_timestamp>/`, with a summary CSV at `logs/<model>/results.csv`.
+By default, outputs are written under `logs/<model>/<framework>/<run_timestamp>/`, with a summary CSV at `logs/<model>/results.csv`.
 
 ```bash
 hirundo-evals MODEL FRAMEWORK TASK --output-dir eval_outputs
@@ -88,4 +90,4 @@ For adapter-specific details, see the relevant framework documentation:
 
 ## Contributing
 
-See `AGENTS.md` for project guidelines, test suite setup, and PR practices.
+See [`AGENTS.md`](AGENTS.md) for project guidelines, test suite setup, and PR practices.

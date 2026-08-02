@@ -24,7 +24,7 @@ def clean_cli_args(
         flag = argument.split("=", 1)[0]
         if flag in managed_flags:
             logging.warning(
-                "Ignoring %s from vLLM arguments; it is managed by serve_vllm",
+                "Ignoring managed CLI option %s; it is configured internally",
                 argument,
             )
             index += 1

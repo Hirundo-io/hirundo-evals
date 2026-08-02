@@ -6,7 +6,6 @@ on:
       version:
         description: 'Version to release. Must be a valid version number; x is forbidden'
         required: true
-        default: '0.1.x'
       test:
         description: 'Release beta release to test PyPI'
         required: true

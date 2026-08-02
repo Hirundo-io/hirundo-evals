@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict
 
 from bidict import bidict
+from inspect_ai.log import EvalLog, read_eval_log, write_eval_log
 
 from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
 from hirundo_evals.utils.cli import clean_cli_args
-
-from ._utils import load_eval_logs, log_runtime
 
 if TYPE_CHECKING:
     from inspect_ai.log import EvalLog
@@ -65,7 +65,6 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             "livecodebench": "inspect_evals/livecodebench_pro",
             "mmlu-pro": "inspect_evals/mmlu_pro",
             "scicode": "inspect_evals/scicode",
-            "xstest": "inspect_evals/xstest",
         }
     )
     FINAL_METRICS_BY_BENCHMARK = {
@@ -151,14 +150,19 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         for task in expanded_tasks:
             # If the task is already in the format compatible with inspect-ai, add it to the list
             if task.startswith("inspect_evals/"):
-                converted_tasks.append(task)
-                continue
-            # If the task is not in the mapping, add it to the list of unknown tasks
-            if task not in InspectWrapper.TASK_TO_BENCHMARK:
+                converted_task = task
+            # If the task is a known alias, convert it to the format compatible with inspect-ai
+            elif task in InspectWrapper.TASK_TO_BENCHMARK:
+                converted_task = InspectWrapper.TASK_TO_BENCHMARK[task]
+            # If the task is not inspect-ai compatible or a known alias, add it to the list of unknown tasks
+            else:
                 unknown_tasks.append(task)
                 continue
+            # If the converted task is already in the list of converted tasks, skip it
+            if converted_task in converted_tasks:
+                continue
             # Add the converted task to the list of converted tasks
-            converted_tasks.append(InspectWrapper.TASK_TO_BENCHMARK[task])
+            converted_tasks.append(converted_task)
         # Log any unknown tasks that were not converted
         if unknown_tasks:
             logging.warning(
@@ -170,43 +174,26 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
 
         return converted_tasks
 
-    @staticmethod
-    def _inspect_model_name(model: str) -> str:
-        """
-        Convert the model name to a format compatible with inspect-ai.
-
-        Args:
-            model: The model name to convert.
-
-        Returns:
-            The converted model name.
-        """
-        if "/" not in model:
-            return model
-
-        provider, _ = model.split("/", 1)
-        if provider in {"hf", "openai"}:
-            return model
-
-        return f"hf/{model}"
-
     def get_cli_cmd(
         self,
         model: str | None = None,
         model_base_url: str | None = None,
         extra: list[str] | None = None,
     ) -> list[str]:
+        model_name = model or self.model
         cmd = [
             "inspect",
             "eval",
             *self._inspect_task_names(self.tasks),
             "--model",
-            self._inspect_model_name(model or self.model),
+            "hf/local" if Path(model_name).is_dir() else model_name,
             "--log-dir",
             self.log_dir,
             "--log-format",
-            "json",
+            "eval",
         ]
+        if Path(model_name).is_dir():
+            cmd.extend(["-M", f"model_path={model_name}"])
         if model_base_url:
             cmd.extend(["--model-base-url", model_base_url])
         clean_extra = clean_cli_args(
@@ -216,6 +203,163 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
 
         return cmd
 
+    def _export_json_logs(self) -> None:
+        for eval_path in Path(self.log_dir).glob("*.eval"):
+            try:
+                log = read_eval_log(eval_path)
+                write_eval_log(log, eval_path.with_suffix(".json"), format="json")
+            except Exception:
+                logging.warning("Could not export Inspect log %s", eval_path)
+
+    def run(
+        self,
+        model: str | None = None,
+        model_base_url: str | None = None,
+        extra: list[str] | None = None,
+    ) -> None:
+        super().run(model, model_base_url, extra)
+        self._export_json_logs()
+
+    @staticmethod
+    def _get_runtime_from_timestamps(started_at: str, completed_at: str) -> int | str:
+        """
+        Calculate runtime (in seconds) from ISO format timestamp strings.
+
+        Args:
+            started_at: The start timestamp.
+            completed_at: The end timestamp.
+
+        Returns:
+            The runtime in seconds.
+            "N/A" if the runtime cannot be calculated.
+        """
+        try:
+            # inspect_ai timestamps are usually ISO 8601 formatted strings
+            # replace Z with +00:00 to make it compatible with python's fromisoformat
+            start = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
+            end = datetime.fromisoformat(completed_at.replace("Z", "+00:00"))
+            duration = end - start
+            # Strip microseconds for cleaner display
+            duration_seconds = int(duration.total_seconds())
+            return duration_seconds
+        except Exception:
+            return "N/A"
+
+    def _load_logs(self) -> list[EvalLog]:
+        logs: list[EvalLog] = []
+        for eval_path in Path(self.log_dir).glob("*.eval"):
+            try:
+                logs.append(read_eval_log(eval_path))
+            except Exception:
+                logging.warning("Could not load Inspect log %s", eval_path)
+
+        return logs
+
+    @staticmethod
+    def _target_metric_name(target_metric: InspectScore) -> str:
+        metric_name = target_metric["name"]
+        if target_metric["is_percentage"]:
+            metric_name += " (%)"
+        return metric_name + (" ⬆️" if target_metric["is_higher_better"] else " ⬇️")
+
+    @staticmethod
+    def _failed_score_values(
+        status: str, target_metrics: list[InspectScore] | None
+    ) -> dict[str, float | str]:
+        if not target_metrics:
+            return {"status": f"Failed ({status})"}
+
+        return {
+            InspectWrapper._target_metric_name(target_metric): f"Failed ({status})"
+            for target_metric in target_metrics
+        }
+
+    @staticmethod
+    def _all_score_values(scores) -> dict[str, float | str]:
+        add_scorer_prefix = len(scores) > 1
+        score_values: dict[str, float | str] = {}
+        for score in scores:
+            for metric_name, metric in score.metrics.items():
+                if add_scorer_prefix:
+                    metric_name = f"{score.name}: {metric_name}"
+                score_values[metric_name] = metric.value
+
+        return score_values
+
+    @staticmethod
+    def _target_score_values(
+        scores, target_metrics: list[InspectScore]
+    ) -> dict[str, float | str]:
+        score_values: dict[str, float | str] = {}
+        for target_metric in target_metrics:
+            metric_name = InspectWrapper._target_metric_name(target_metric)
+            for score in scores:
+                if target_metric["name"] not in score.metrics:
+                    continue
+                metric_value = score.metrics[target_metric["name"]].value
+                if target_metric["is_percentage"]:
+                    if target_metric["is_normalized"]:
+                        metric_value *= 100.0
+                score_values[metric_name] = metric_value
+                break
+            else:
+                score_values[metric_name] = (
+                    f"Metric '{target_metric['name']}' not found"
+                )
+
+        return score_values
+
+    @classmethod
+    def _score_values(
+        cls, log: EvalLog, target_metrics: list[InspectScore] | None
+    ) -> dict[str, float | str]:
+        if log.status != "success":
+            return cls._failed_score_values(log.status, target_metrics)
+        if not log.results or not log.results.scores:
+            if target_metrics:
+                return cls._target_score_values([], target_metrics)
+            return {"status": "No scores available"}
+        if not target_metrics:
+            return cls._all_score_values(log.results.scores)
+
+        return cls._target_score_values(log.results.scores, target_metrics)
+
+    def _prepare_log_results(self, log: EvalLog, run_id: str) -> list[OutputEntry]:
+        task_name = log.eval.task
+        benchmark_alias = InspectWrapper.TASK_TO_BENCHMARK.inv.get(task_name, task_name)
+        target_metrics = InspectWrapper.FINAL_METRICS_BY_BENCHMARK.get(benchmark_alias)
+        if (
+            log.stats
+            and hasattr(log.stats, "started_at")
+            and hasattr(log.stats, "completed_at")
+        ):
+            runtime = self._get_runtime_from_timestamps(
+                log.stats.started_at, log.stats.completed_at
+            )
+        else:
+            runtime = "N/A"
+
+        results = [
+            OutputEntry(
+                {
+                    "Run ID": run_id,
+                    "Framework": "inspect-ai",
+                    "Benchmark": benchmark_alias,
+                    "Metric": score_name,
+                    "Score": score_value,
+                    "Runtime (sec)": runtime,
+                }
+            )
+            for score_name, score_value in self._score_values(
+                log, target_metrics
+            ).items()
+        ]
+        logging.info(
+            f"Task: {benchmark_alias} | Status: {log.status} | Runtime: {runtime}"
+        )
+
+        return results
+
     def prepare_results(self) -> list[OutputEntry]:
         """
         Prepare the results of the evaluation for CSV export.
@@ -223,82 +367,10 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         Returns:
             The results of the evaluation for CSV export.
         """
-        # Load the logs from the JSON files
-        logs: list[EvalLog] = load_eval_logs(self.log_dir)
-        # Prepare results for CSV export
+        logs = self._load_logs()
         results: list[OutputEntry] = []
         run_id = Path(self.log_dir).name
         for log in logs:
-            task_name = log.eval.task
-            alias = InspectWrapper.TASK_TO_BENCHMARK.inv.get(task_name, task_name)
-            target_metrics = InspectWrapper.FINAL_METRICS_BY_BENCHMARK.get(alias)
-            status = log.status
-            # Extract runtime from log.stats if available
-            runtime = log_runtime(log)
-            if status != "success":
-                results.extend(
-                    self._failure_output_entries(
-                        "inspect-ai",
-                        alias,
-                        status,
-                        runtime,
-                        [metric["name"] for metric in target_metrics]
-                        if target_metrics
-                        else None,
-                    )
-                )
-                logging.info(f"Task: {alias} | Status: {status} | Runtime: {runtime}")
-                continue
-
-            # Initialize the scores
-            score_values: dict[str, float | str] = {}
-            # If the task completed successfully, extract the targeted metrics
-            # Otherwise, fill the score_values with the status
-            if log.results and log.results.scores:
-                # inspect_ai stores metrics inside score objects
-                if not target_metrics:
-                    add_scorer_prefix = len(log.results.scores) > 1
-                    for score in log.results.scores:
-                        for metric_name, metric in score.metrics.items():
-                            if add_scorer_prefix:
-                                metric_name = f"{score.name}: {metric_name}"
-                            score_values[metric_name] = metric.value
-                else:
-                    for target_metric in target_metrics:
-                        for score in log.results.scores:
-                            if target_metric["name"] in score.metrics:
-                                metric_name = target_metric["name"]
-                                metric_value = score.metrics[metric_name].value
-                                if target_metric["is_percentage"]:
-                                    if target_metric["is_normalized"]:
-                                        metric_value *= 100.0
-                                    metric_name += " (%)"
-                                if target_metric["is_higher_better"]:
-                                    metric_name += " ⬆️"
-                                else:
-                                    metric_name += " ⬇️"
-                                score_values[metric_name] = metric_value
-                                break
-                        else:
-                            # Fallback if the expected metric name wasn't found in the results
-                            score_values[target_metric["name"]] = (
-                                f"Metric '{target_metric['name']}' not found"
-                            )
-            # Add the data to the CSV data
-            for score_name, score_value in score_values.items():
-                results.append(
-                    OutputEntry(
-                        {
-                            "Run ID": run_id,
-                            "Framework": "inspect-ai",
-                            "Benchmark": alias,
-                            "Metric": score_name,
-                            "Score": score_value,
-                            "Runtime (sec)": runtime,
-                        }
-                    )
-                )
-            # Log the results
-            logging.info(f"Task: {alias} | Status: {status} | Runtime: {runtime}")
+            results.extend(self._prepare_log_results(log, run_id))
 
         return results
