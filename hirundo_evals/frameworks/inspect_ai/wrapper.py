@@ -166,14 +166,6 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
 
         return converted_tasks
 
-    def _export_json_logs(self) -> None:
-        for eval_path in Path(self.log_dir).glob("*.eval"):
-            try:
-                log = read_eval_log(eval_path)
-                write_eval_log(log, eval_path.with_suffix(".json"), format="json")
-            except Exception:
-                logging.warning("Could not export Inspect log %s", eval_path)
-
     @staticmethod
     def _parse_eval_args(extra: list[str] | None) -> dict[str, Any]:  # noqa: C901
         arguments = clean_cli_args(
@@ -239,6 +231,14 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             parsed["model_roles"] = model_roles
         return parsed
 
+    def _export_json_logs(self) -> None:
+        for eval_path in Path(self.log_dir).glob("*.eval"):
+            try:
+                log = read_eval_log(eval_path)
+                write_eval_log(log, eval_path.with_suffix(".json"), format="json")
+            except Exception:
+                logging.warning("Could not export Inspect log %s", eval_path)
+
     def run_eval(
         self,
         model: str | None = None,
@@ -257,7 +257,6 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             model_base_url=model_base_url,
             log_dir=self.log_dir,
             log_format="eval",
-            log_level="info",
             **model_args,
         )
         self._export_json_logs()
