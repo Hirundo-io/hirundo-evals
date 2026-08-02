@@ -1,9 +1,11 @@
+import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from bidict import bidict
+from inspect_ai import eval as inspect_eval
 from inspect_ai.log import EvalLog, read_eval_log, write_eval_log
 
 from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
@@ -164,35 +166,6 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
 
         return converted_tasks
 
-    def get_cli_cmd(
-        self,
-        model: str | None = None,
-        model_base_url: str | None = None,
-        extra: list[str] | None = None,
-    ) -> list[str]:
-        model_name = model or self.model
-        cmd = [
-            "inspect",
-            "eval",
-            *self._inspect_task_names(self.tasks),
-            "--model",
-            "hf/local" if Path(model_name).is_dir() else model_name,
-            "--log-dir",
-            self.log_dir,
-            "--log-format",
-            "eval",
-        ]
-        if Path(model_name).is_dir():
-            cmd.extend(["-M", f"model_path={model_name}"])
-        if model_base_url:
-            cmd.extend(["--model-base-url", model_base_url])
-        clean_extra = clean_cli_args(
-            extra, ["--model", "--model-base-url", "--log-dir", "--log-format"]
-        )
-        cmd.extend(clean_extra)
-
-        return cmd
-
     def _export_json_logs(self) -> None:
         for eval_path in Path(self.log_dir).glob("*.eval"):
             try:
@@ -201,14 +174,95 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             except Exception:
                 logging.warning("Could not export Inspect log %s", eval_path)
 
-    def run(
+    @staticmethod
+    def _parse_eval_args(extra: list[str] | None) -> dict[str, Any]:  # noqa: C901
+        arguments = clean_cli_args(
+            extra,
+            ["--model", "--model-base-url", "--log-dir", "--log-format"],
+        )
+        parsed: dict[str, Any] = {}
+        model_args: dict[str, Any] = {}
+        model_roles: dict[str, str] = {}
+        integer_options = {
+            "epochs",
+            "limit",
+            "max-samples",
+            "max-subprocesses",
+            "sample-id",
+            "time-limit",
+            "token-limit",
+            "turn-limit",
+            "working-limit",
+        }
+        float_options = {"cost-limit", "temperature", "top-p"}
+
+        index = 0
+        while index < len(arguments):
+            argument = arguments[index]
+            if argument in {"-M", "--model-args"}:
+                index += 1
+                key, value = arguments[index].split("=", 1)
+                try:
+                    model_args[key] = json.loads(value)
+                except json.JSONDecodeError:
+                    model_args[key] = value
+            elif argument == "--model-role":
+                index += 1
+                role, model = arguments[index].split("=", 1)
+                model_roles[role] = model
+            else:
+                flag, separator, value = argument.partition("=")
+                option = flag.lstrip("-")
+                if not separator:
+                    if index + 1 < len(arguments) and not arguments[
+                        index + 1
+                    ].startswith("-"):
+                        index += 1
+                        value = arguments[index]
+                    else:
+                        value = "false" if option.startswith("no-") else "true"
+                        option = option.removeprefix("no-")
+                option = option.replace("-", "_")
+                if option in integer_options:
+                    parsed[option] = int(value)
+                elif option in float_options:
+                    parsed[option] = float(value)
+                elif value == "true" or value == "false":
+                    parsed[option] = value == "true"
+                else:
+                    parsed[option] = value
+            index += 1
+
+        if model_args:
+            parsed["model_args"] = model_args
+        if model_roles:
+            parsed["model_roles"] = model_roles
+        return parsed
+
+    def run_eval(
         self,
         model: str | None = None,
         model_base_url: str | None = None,
         extra: list[str] | None = None,
-    ) -> None:
-        super().run(model, model_base_url, extra)
+    ) -> list[EvalLog]:
+        model_name = model or self.model
+        model_args = self._parse_eval_args(extra)
+        if Path(model_name).is_dir():
+            model_name = "hf/local"
+            model_args.setdefault("model_args", {})["model_path"] = model or self.model
+
+        logs = inspect_eval(
+            self._inspect_task_names(self.tasks),
+            model=model_name,
+            model_base_url=model_base_url,
+            log_dir=self.log_dir,
+            log_format="eval",
+            log_level="info",
+            **model_args,
+        )
         self._export_json_logs()
+
+        return logs
 
     @staticmethod
     def _get_runtime_from_timestamps(started_at: str, completed_at: str) -> int | str:
@@ -344,20 +398,22 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
                 log, target_metrics
             ).items()
         ]
+        status_icon = "✅" if log.status == "success" else "❌"
         logging.info(
-            f"Task: {benchmark_alias} | Status: {log.status} | Runtime: {runtime}"
+            f"{status_icon} Task: {benchmark_alias} | "
+            f"Status: {log.status} | Runtime: {runtime}"
         )
 
         return results
 
-    def prepare_results(self) -> list[OutputEntry]:
+    def prepare_results(self, outputs: list[EvalLog] | None) -> list[OutputEntry]:
         """
         Prepare the results of the evaluation for CSV export.
 
         Returns:
             The results of the evaluation for CSV export.
         """
-        logs = self._load_logs()
+        logs = outputs or self._load_logs()
         results: list[OutputEntry] = []
         run_id = Path(self.log_dir).name
         for log in logs:

@@ -1,22 +1,23 @@
 import csv
+from pathlib import Path
 
 from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
 
 
 class DummyWrapper(BaseEvalFrameworkWrapper):
     def __init__(self, rows: list[OutputEntry]) -> None:
-        super().__init__("model", ["task"], "logs/run")
+        super().__init__("model", ["task"], Path("logs"), Path("logs/run"))
         self.rows = rows
 
-    def get_cli_cmd(
+    def run_eval(
         self,
         model: str | None = None,
         model_base_url: str | None = None,
         extra: list[str] | None = None,
-    ) -> list[str]:
-        return ["dummy"]
+    ) -> None:
+        return None
 
-    def prepare_results(self) -> list[OutputEntry]:
+    def prepare_results(self, outputs) -> list[OutputEntry]:
         return self.rows
 
 
@@ -35,8 +36,8 @@ def test_export_results_appends_without_duplicate_header_and_formats_score(
         }
     )
 
-    DummyWrapper([row]).export_results(str(output_path))
-    DummyWrapper([row]).export_results(str(output_path))
+    DummyWrapper([row]).export_results(None, str(output_path))
+    DummyWrapper([row]).export_results(None, str(output_path))
 
     with output_path.open(newline="", encoding="utf-8") as f:
         lines = f.readlines()

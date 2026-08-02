@@ -12,7 +12,11 @@ class EvalFramework(StrEnum):
 
 
 def get_eval_framework_wrapper(
-    framework: EvalFramework, model: str, tasks: list[str], log_dir: str | Path
+    framework: EvalFramework,
+    model: str,
+    tasks: list[str],
+    output_dir: Path,
+    log_dir: Path,
 ) -> "BaseEvalFrameworkWrapper":
     """
     Get the evaluation framework wrapper for the given framework.
@@ -21,6 +25,7 @@ def get_eval_framework_wrapper(
         framework: The evaluation framework to get the wrapper for.
         model: The model to evaluate.
         tasks: The tasks/benchmarks to evaluate.
+        output_dir: The directory in which to save the summary CSV.
         log_dir: The directory in which to save the outputs.
 
     Returns:
@@ -36,4 +41,4 @@ def get_eval_framework_wrapper(
             f"Currently supported frameworks: {', '.join(e.value for e in EvalFramework)}"
         )
 
-    return wrapper(model, tasks, log_dir)
+    return wrapper(model, tasks, output_dir, log_dir)

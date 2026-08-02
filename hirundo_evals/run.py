@@ -170,7 +170,7 @@ def run_evaluation(
     # Create the output and log directories
     output_dir, log_dir = _create_output_and_log_dirs(output_dir, model, framework)
     logging.info(
-        f"🚀 Starting evaluation suite on {len(tasks)} tasks: {', '.join(tasks)}"
+        f"🚀 Starting evaluation suite on {len(tasks)} task{'s' if len(tasks) > 1 else ''}: {', '.join(tasks)}"
     )
     # Parse the framework CLI arguments
     framework_args = _parse_cli_args(framework_cli_args)
@@ -178,7 +178,9 @@ def run_evaluation(
     logging.info(f"📁 Log Directory: {log_dir}")
     logging.info(f"📊 CSV Output: {output_dir / 'results.csv'}")
     # Get the evaluation framework wrapper
-    framework_wrapper = get_eval_framework_wrapper(framework, model, tasks, log_dir)
+    framework_wrapper = get_eval_framework_wrapper(
+        framework, model, tasks, output_dir, log_dir
+    )
     # Run the evaluation
     if run_with_local_vllm:
         # Parse the vLLM CLI arguments
@@ -200,9 +202,7 @@ def run_evaluation(
     else:
         # Run the evaluation without a local vLLM server
         framework_wrapper.run(model_base_url=model_base_url, extra=framework_args)
-    logging.info(f"✅ Evaluation complete! Logs saved to: {log_dir}")
-    # Export the results to a CSV file
-    framework_wrapper.export_results(os.path.join(output_dir, "results.csv"))
+    logging.info("✅ Done!")
 
 
 @app.command(

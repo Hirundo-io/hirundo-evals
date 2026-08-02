@@ -1,3 +1,4 @@
+from pathlib import Path
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, cast
 
@@ -6,29 +7,6 @@ if TYPE_CHECKING:
 
 from hirundo_evals.frameworks.inspect_ai import wrapper as inspect_wrapper
 from hirundo_evals.frameworks.inspect_ai.wrapper import InspectWrapper
-
-
-def test_inspect_command_maps_aliases_and_preserves_model_name() -> None:
-    wrapper = InspectWrapper(
-        "ibm-granite/granite-4.1-3b",
-        ["aime25", "gpqa"],
-        "raw-logs",
-    )
-
-    assert wrapper.get_cli_cmd(extra=["--limit", "1"]) == [
-        "inspect",
-        "eval",
-        "inspect_evals/aime2025",
-        "inspect_evals/gpqa_diamond",
-        "--model",
-        "ibm-granite/granite-4.1-3b",
-        "--log-dir",
-        "raw-logs",
-        "--log-format",
-        "eval",
-        "--limit",
-        "1",
-    ]
 
 
 def test_inspect_task_names_deduplicate_expanded_tasks() -> None:
@@ -42,15 +20,23 @@ def test_inspect_task_names_deduplicate_expanded_tasks() -> None:
     ]
 
 
-def test_inspect_command_configures_existing_local_model_path(tmp_path) -> None:
+def test_run_configures_existing_local_model_path(monkeypatch, tmp_path) -> None:
     model_path = tmp_path / "model"
     model_path.mkdir()
-    wrapper = InspectWrapper(str(model_path), ["aime25"], "raw-logs")
+    calls = []
 
-    cmd = wrapper.get_cli_cmd()
+    monkeypatch.setattr(
+        inspect_wrapper,
+        "inspect_eval",
+        lambda *args, **kwargs: calls.append((args, kwargs)),
+    )
+    monkeypatch.setattr(InspectWrapper, "_export_json_logs", lambda self: None)
 
-    assert cmd[cmd.index("--model") + 1] == "hf/local"
-    assert cmd[cmd.index("-M") + 1] == f"model_path={model_path}"
+    wrapper = InspectWrapper(str(model_path), ["aime25"], tmp_path, tmp_path)
+    wrapper.run()
+
+    assert calls[0][1]["model"] == "hf/local"
+    assert calls[0][1]["model_args"]["model_path"] == str(model_path)
 
 
 def test_load_logs_reads_eval_files_and_ignores_json(tmp_path, monkeypatch) -> None:
@@ -66,7 +52,7 @@ def test_load_logs_reads_eval_files_and_ignores_json(tmp_path, monkeypatch) -> N
 
     monkeypatch.setattr(inspect_wrapper, "read_eval_log", fake_read_eval_log)
 
-    wrapper = InspectWrapper("some/model", ["aime25"], tmp_path)
+    wrapper = InspectWrapper("some/model", ["aime25"], tmp_path, tmp_path)
 
     assert wrapper._load_logs() == [loaded_log]
     assert read_paths == [eval_path]
@@ -84,28 +70,44 @@ def test_export_json_logs_writes_same_stem_as_eval(tmp_path, monkeypatch) -> Non
         lambda log, path, **kwargs: written.append((log, path, kwargs["format"])),
     )
 
-    wrapper = InspectWrapper("some/model", ["aime25"], tmp_path)
+    wrapper = InspectWrapper("some/model", ["aime25"], tmp_path, tmp_path)
     wrapper._export_json_logs()
 
     assert written == [("log", tmp_path / "run.json", "json")]
 
 
-def test_inspect_command_preserves_explicit_openai_model_base_url() -> None:
-    wrapper = InspectWrapper("some/model", ["inspect_evals/aime2025"], "raw-logs")
+def test_run_uses_inspect_python_api(monkeypatch, tmp_path) -> None:
+    calls = []
 
-    cmd = wrapper.get_cli_cmd(
-        model="openai/some/model",
-        model_base_url="http://localhost:8000/v1",
-    )
+    def fake_inspect_eval(*args, **kwargs):
+        calls.append((args, kwargs))
 
-    assert "--model" in cmd
-    assert cmd[cmd.index("--model") + 1] == "openai/some/model"
-    assert "--model-base-url" in cmd
-    assert cmd[cmd.index("--model-base-url") + 1] == "http://localhost:8000/v1"
+    monkeypatch.setattr(inspect_wrapper, "inspect_eval", fake_inspect_eval)
+    monkeypatch.setattr(InspectWrapper, "_export_json_logs", lambda self: None)
+
+    wrapper = InspectWrapper("some/model", ["aime25"], tmp_path, tmp_path)
+    wrapper.run(extra=["--limit", "1", "--epochs", "2"])
+
+    assert calls == [
+        (
+            (["inspect_evals/aime2025"],),
+            {
+                "model": "some/model",
+                "model_base_url": None,
+                "log_dir": str(tmp_path),
+                "log_format": "eval",
+                "log_level": "info",
+                "limit": 1,
+                "epochs": 2,
+            },
+        )
+    ]
 
 
 def test_prepare_results_normalizes_configured_metric() -> None:
-    wrapper = InspectWrapper("some/model", ["aime25"], "raw-logs")
+    wrapper = InspectWrapper(
+        "some/model", ["aime25"], Path("raw-logs"), Path("raw-logs")
+    )
     log = cast(
         "EvalLog",
         SimpleNamespace(
@@ -138,7 +140,9 @@ def test_prepare_results_normalizes_configured_metric() -> None:
 
 
 def test_prepare_results_reports_failed_task() -> None:
-    wrapper = InspectWrapper("some/model", ["ifeval"], "raw-logs")
+    wrapper = InspectWrapper(
+        "some/model", ["ifeval"], Path("raw-logs"), Path("raw-logs")
+    )
     log = cast(
         "EvalLog",
         SimpleNamespace(
@@ -156,7 +160,9 @@ def test_prepare_results_reports_failed_task() -> None:
 
 
 def test_prepare_results_reports_missing_configured_metric() -> None:
-    wrapper = InspectWrapper("some/model", ["aime25"], "raw-logs")
+    wrapper = InspectWrapper(
+        "some/model", ["aime25"], Path("raw-logs"), Path("raw-logs")
+    )
     log = cast(
         "EvalLog",
         SimpleNamespace(
@@ -181,7 +187,9 @@ def test_prepare_results_reports_missing_configured_metric() -> None:
 
 
 def test_prepare_results_reports_missing_scores_for_configured_metric() -> None:
-    wrapper = InspectWrapper("some/model", ["aime25"], "raw-logs")
+    wrapper = InspectWrapper(
+        "some/model", ["aime25"], Path("raw-logs"), Path("raw-logs")
+    )
     log = cast(
         "EvalLog",
         SimpleNamespace(
@@ -199,7 +207,9 @@ def test_prepare_results_reports_missing_scores_for_configured_metric() -> None:
 
 
 def test_prepare_results_reports_missing_scores_without_configured_metric() -> None:
-    wrapper = InspectWrapper("some/model", ["aime25"], "raw-logs")
+    wrapper = InspectWrapper(
+        "some/model", ["aime25"], Path("raw-logs"), Path("raw-logs")
+    )
     log = cast(
         "EvalLog",
         SimpleNamespace(
