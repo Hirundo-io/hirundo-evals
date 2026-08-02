@@ -59,6 +59,8 @@ hirundo-evals MODEL FRAMEWORK TASK \
 
 When supported by the selected adapter, the managed vLLM path starts a local OpenAI-compatible server, sets a temporary dummy `OPENAI_API_KEY`, and routes the evaluation through the local server URL.
 
+Supports Hugging Face model IDs and local Hugging Face model directories only.
+
 ### Outputs
 
 By default, outputs are written under `logs/<model>/<framework>/<run_timestamp>/`, with a summary CSV at `logs/<model>/results.csv`.

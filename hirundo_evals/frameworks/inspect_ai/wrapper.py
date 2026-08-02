@@ -1,11 +1,10 @@
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import TypedDict
 
 from bidict import bidict
-from inspect_ai.log import EvalLog
+from inspect_ai.log import EvalLog, read_eval_log, write_eval_log
 
 from hirundo_evals.frameworks._base import BaseEvalFrameworkWrapper, OutputEntry
 from hirundo_evals.utils.cli import clean_cli_args
@@ -181,7 +180,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             "--log-dir",
             self.log_dir,
             "--log-format",
-            "json",
+            "eval",
         ]
         if Path(model_name).is_dir():
             cmd.extend(["-M", f"model_path={model_name}"])
@@ -193,6 +192,23 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         cmd.extend(clean_extra)
 
         return cmd
+
+    def _export_json_logs(self) -> None:
+        for eval_path in Path(self.log_dir).glob("*.eval"):
+            try:
+                log = read_eval_log(eval_path)
+                write_eval_log(log, eval_path.with_suffix(".json"), format="json")
+            except Exception:
+                logging.warning("Could not export Inspect log %s", eval_path)
+
+    def run(
+        self,
+        model: str | None = None,
+        model_base_url: str | None = None,
+        extra: list[str] | None = None,
+    ) -> None:
+        super().run(model, model_base_url, extra)
+        self._export_json_logs()
 
     @staticmethod
     def _get_runtime_from_timestamps(started_at: str, completed_at: str) -> int | str:
@@ -221,13 +237,20 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
 
     def _load_logs(self) -> list[EvalLog]:
         logs: list[EvalLog] = []
-        for file in os.listdir(self.log_dir):
-            if not file.endswith(".json"):
-                continue
-            with open(os.path.join(self.log_dir, file)) as log_file:
-                logs.append(EvalLog.model_validate_json(log_file.read()))
+        for eval_path in Path(self.log_dir).glob("*.eval"):
+            try:
+                logs.append(read_eval_log(eval_path))
+            except Exception:
+                logging.warning("Could not load Inspect log %s", eval_path)
 
         return logs
+
+    @staticmethod
+    def _target_metric_name(target_metric: InspectScore) -> str:
+        metric_name = target_metric["name"]
+        if target_metric["is_percentage"]:
+            metric_name += " (%)"
+        return metric_name + (" ⬆️" if target_metric["is_higher_better"] else " ⬇️")
 
     @staticmethod
     def _failed_score_values(
@@ -237,7 +260,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
             return {"status": f"Failed ({status})"}
 
         return {
-            target_metric["name"]: f"Failed ({status})"
+            InspectWrapper._target_metric_name(target_metric): f"Failed ({status})"
             for target_metric in target_metrics
         }
 
@@ -259,20 +282,18 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
     ) -> dict[str, float | str]:
         score_values: dict[str, float | str] = {}
         for target_metric in target_metrics:
+            metric_name = InspectWrapper._target_metric_name(target_metric)
             for score in scores:
                 if target_metric["name"] not in score.metrics:
                     continue
-                metric_name = target_metric["name"]
-                metric_value = score.metrics[metric_name].value
+                metric_value = score.metrics[target_metric["name"]].value
                 if target_metric["is_percentage"]:
                     if target_metric["is_normalized"]:
                         metric_value *= 100.0
-                    metric_name += " (%)"
-                metric_name += " ⬆️" if target_metric["is_higher_better"] else " ⬇️"
                 score_values[metric_name] = metric_value
                 break
             else:
-                score_values[target_metric["name"]] = (
+                score_values[metric_name] = (
                     f"Metric '{target_metric['name']}' not found"
                 )
 
@@ -285,7 +306,9 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
         if log.status != "success":
             return cls._failed_score_values(log.status, target_metrics)
         if not log.results or not log.results.scores:
-            return {}
+            if target_metrics:
+                return cls._target_score_values([], target_metrics)
+            return {"status": "No scores available"}
         if not target_metrics:
             return cls._all_score_values(log.results.scores)
 
@@ -293,8 +316,8 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
 
     def _prepare_log_results(self, log: EvalLog, run_id: str) -> list[OutputEntry]:
         task_name = log.eval.task
-        alias = InspectWrapper.TASK_TO_BENCHMARK.inv.get(task_name, task_name)
-        target_metrics = InspectWrapper.FINAL_METRICS_BY_BENCHMARK.get(alias)
+        benchmark_alias = InspectWrapper.TASK_TO_BENCHMARK.inv.get(task_name, task_name)
+        target_metrics = InspectWrapper.FINAL_METRICS_BY_BENCHMARK.get(benchmark_alias)
         if (
             log.stats
             and hasattr(log.stats, "started_at")
@@ -311,7 +334,7 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
                 {
                     "Run ID": run_id,
                     "Framework": "inspect-ai",
-                    "Benchmark": alias,
+                    "Benchmark": benchmark_alias,
                     "Metric": score_name,
                     "Score": score_value,
                     "Runtime (sec)": runtime,
@@ -321,7 +344,9 @@ class InspectWrapper(BaseEvalFrameworkWrapper):
                 log, target_metrics
             ).items()
         ]
-        logging.info(f"Task: {alias} | Status: {log.status} | Runtime: {runtime}")
+        logging.info(
+            f"Task: {benchmark_alias} | Status: {log.status} | Runtime: {runtime}"
+        )
 
         return results
 

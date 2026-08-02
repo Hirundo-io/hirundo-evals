@@ -24,11 +24,12 @@ keywords = [
   "large language models",
   "LLMs evaluation",
 ]
-requires-python = ">=3.11,<3.14"
+requires-python = ">=3.12,<3.14"
 dependencies = [
   "inspect-ai",
   "inspect-evals>=0.16.0",
-  "instruction-following-eval @ git+https://github.com/josejg/instruction_following_eval",
+  "instruction-following-eval",
+  "inspect-harbor",
   "accelerate",
   "typer",
   "bidict",
@@ -53,10 +54,11 @@ local-dev = ["hirundo-evals[vllm]"]
 docs = ["sphinx>=8.0.0"]
 
 [tool.uv.dependency-groups]
-docs = { requires-python = ">=3.11.4" }
+docs = { requires-python = ">=3.12" }
 
 [tool.uv.sources]
 hirundo-evals = { path = ".", editable = true }
+instruction-following-eval = { git = "https://github.com/josejg/instruction_following_eval", rev = "0c495b2" }
 
 [tool.setuptools.packages.find]
 include = ["hirundo_evals*"]

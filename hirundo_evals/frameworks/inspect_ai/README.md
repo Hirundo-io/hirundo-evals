@@ -11,13 +11,13 @@ hirundo-evals MODEL inspect-ai TASK[,TASK...] [HIRUNDO_OPTIONS] [INSPECT_OPTIONS
 Example:
 
 ```bash
-hirundo-evals ibm-granite/granite-4.1-3b inspect-ai inspect_evals/aime2025 --limit 1
+hirundo-evals hf/ibm-granite/granite-4.1-3b inspect-ai inspect_evals/aime2025 --limit 1
 ```
 
 Multiple tasks are comma-separated:
 
 ```bash
-hirundo-evals ibm-granite/granite-4.1-3b inspect-ai inspect_evals/aime2025,inspect_evals/gpqa_diamond --limit 1
+hirundo-evals hf/ibm-granite/granite-4.1-3b inspect-ai inspect_evals/aime2025,inspect_evals/gpqa_diamond --limit 1
 ```
 
 Arguments not recognized by `hirundo-evals` are forwarded to `inspect eval`.
@@ -37,9 +37,7 @@ Unknown task names are ignored. If no valid tasks remain, the adapter raises an 
 
 ## Model Names
 
-Bare Hugging Face model IDs are passed to Inspect as `hf/<model>`. Explicit `hf/...` and `openai/...` prefixes are preserved.
-
-For example, `ibm-granite/granite-4.1-3b` is sent to Inspect as `hf/ibm-granite/granite-4.1-3b`.
+Bare local model directories are passed to Inspect as `hf/local` with the directory supplied as `path/to/model`. Explicit prefixes (e.g., `hf/...`, `openai/...`, `anthropic/...`, etc.) are preserved (see [Model Providers](https://inspect.aisi.org.uk/providers.html) for more details).
 
 ## Managed Local vLLM
 
@@ -52,6 +50,8 @@ hirundo-evals ibm-granite/granite-4.1-3b inspect-ai aime25 \
 ```
 
 For Inspect AI, `--vllm-local` starts Hirundo Evals' managed OpenAI-compatible vLLM server, sets a temporary dummy `OPENAI_API_KEY`, and forwards Inspect to the local server URL.
+
+When using `--vllm-local`, provide the model name without a provider prefix, as shown above. This mode supports Hugging Face model IDs and local Hugging Face model directories; provider-prefixed API models such as `anthropic/...` or `google/...` are not supported by the managed local vLLM path.
 
 ## Results
 
