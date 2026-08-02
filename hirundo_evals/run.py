@@ -48,13 +48,16 @@ def _parse_tasks(tasks: str) -> list[str]:
     return parsed_tasks
 
 
-def _parse_output_and_log_dirs(output_dir: Path, model: str) -> tuple[Path, Path]:
+def _create_output_and_log_dirs(
+    output_dir: Path, model: str, framework: EvalFramework
+) -> tuple[Path, Path]:
     """
-    Parse the output and log directories from the command line argument.
+    Parse and create the output and log directories from the command line argument.
 
     Args:
         output_dir: The directory to save the outputs.
         model: The model to evaluate.
+        framework: The evaluation framework to use.
 
     Returns:
         The output and log directories.
@@ -62,7 +65,7 @@ def _parse_output_and_log_dirs(output_dir: Path, model: str) -> tuple[Path, Path
     output_dir = output_dir / Path(
         *Path(os.path.abspath(model) if model.startswith(".") else model).parts[-2:]
     )
-    log_dir = output_dir / datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_dir = output_dir / framework.value / datetime.now().strftime("%Y%m%d_%H%M%S")
     output_dir.mkdir(parents=True, exist_ok=True)
     log_dir.mkdir(parents=True, exist_ok=True)
 
@@ -165,7 +168,7 @@ def run_evaluation(
     # Parse the tasks
     tasks = [tasks] if isinstance(tasks, str) else tasks
     # Create the output and log directories
-    output_dir, log_dir = _parse_output_and_log_dirs(output_dir, model)
+    output_dir, log_dir = _create_output_and_log_dirs(output_dir, model, framework)
     logging.info(
         f"🚀 Starting evaluation suite on {len(tasks)} tasks: {', '.join(tasks)}"
     )

@@ -61,7 +61,7 @@ When supported by the selected adapter, the managed vLLM path starts a local Ope
 
 ### Outputs
 
-By default, outputs are written under `logs/<model>/<run_timestamp>/`, with a summary CSV at `logs/<model>/results.csv`.
+By default, outputs are written under `logs/<model>/<framework>/<run_timestamp>/`, with a summary CSV at `logs/<model>/results.csv`.
 
 ```bash
 hirundo-evals MODEL FRAMEWORK TASK --output-dir eval_outputs
