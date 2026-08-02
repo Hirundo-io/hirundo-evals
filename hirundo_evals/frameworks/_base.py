@@ -44,9 +44,15 @@ class BaseEvalFrameworkWrapper(ABC):
         """
         Get the CLI command to run the framework.
 
+        Implementations must return a deterministic argument list for the
+        supplied inputs. Avoid shell command strings or shell interpolation;
+        the returned command is executed directly and must not introduce
+        shell-injection vulnerabilities.
+
         Args:
             model: Optional model override.
-            model_base_url: Optional model base URL. Required if the model is hosted externally.
+            model_base_url: Optional base URL for the model. Required when the model is
+                hosted externally.
             extra: Extra arguments to pass to the framework.
 
         Returns:
@@ -65,10 +71,13 @@ class BaseEvalFrameworkWrapper(ABC):
 
         Args:
             model: Optional model override.
-            model_base_url: Optional model base URL. Required if the model is hosted externally.
+            model_base_url: Optional base URL for the model. Required when the model is
+                hosted externally.
             extra: Extra arguments to pass to the framework.
         """
         cmd = self.get_cli_cmd(model, model_base_url, extra)
+        # The adapter builds an argument list without shell=True, so values are
+        # passed as arguments rather than interpreted as shell syntax.
         subprocess.run(cmd, check=True)  # noqa: S603
 
     @abstractmethod
@@ -105,7 +114,7 @@ class BaseEvalFrameworkWrapper(ABC):
             existing_rows: list[dict[str, str]] = []
             should_write_header = True
             # Get existing rows and fieldnames if the file exists
-            if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
+            if os.path.isfile(output_path) and os.path.getsize(output_path) > 0:
                 with open(output_path, newline="", encoding="utf-8") as f:
                     reader = csv.DictReader(f)
                     existing_fieldnames = list(reader.fieldnames or [])

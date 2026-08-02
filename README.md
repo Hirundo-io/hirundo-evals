@@ -13,13 +13,13 @@ An evaluation CLI for running LLM benchmarks through pluggable framework adapter
 ```bash
 uv venv .venv
 source .venv/bin/activate
-uv pip install --python .venv/bin/python -e .
+uv sync
 ```
 
 Install vLLM support when you need managed local serving:
 
 ```bash
-uv pip install --python .venv/bin/python -e ".[vllm]"
+uv sync --extra vllm
 ```
 
 ## Usage
@@ -83,8 +83,8 @@ Supported frameworks currently include Inspect AI.
 
 For adapter-specific details, see the relevant framework documentation:
 
-- Inspect AI: `hirundo_evals/frameworks/inspect_ai/README.md`
+- [Inspect AI](hirundo_evals/frameworks/inspect_ai/README.md)
 
 ## Contributing
 
-See `AGENTS.md` for project guidelines, test suite setup, and PR practices.
+See [`AGENTS.md`](AGENTS.md) for project guidelines, test suite setup, and PR practices.

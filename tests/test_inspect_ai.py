@@ -1,7 +1,13 @@
+from types import SimpleNamespace
+from typing import TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    from inspect_ai.log import EvalLog
+
 from hirundo_evals.frameworks.inspect_ai.wrapper import InspectWrapper
 
 
-def test_inspect_command_maps_aliases_and_prefixes_hf_models() -> None:
+def test_inspect_command_maps_aliases_and_preserves_model_name() -> None:
     wrapper = InspectWrapper(
         "ibm-granite/granite-4.1-3b",
         ["aime25", "gpqa"],
@@ -14,7 +20,7 @@ def test_inspect_command_maps_aliases_and_prefixes_hf_models() -> None:
         "inspect_evals/aime2025",
         "inspect_evals/gpqa_diamond",
         "--model",
-        "hf/ibm-granite/granite-4.1-3b",
+        "ibm-granite/granite-4.1-3b",
         "--log-dir",
         "raw-logs",
         "--log-format",
@@ -22,6 +28,28 @@ def test_inspect_command_maps_aliases_and_prefixes_hf_models() -> None:
         "--limit",
         "1",
     ]
+
+
+def test_inspect_task_names_deduplicate_expanded_tasks() -> None:
+    assert InspectWrapper._inspect_task_names(["nemo-skills", "gpqa"]) == [
+        "inspect_evals/aime2025",
+        "inspect_evals/gpqa_diamond",
+        "inspect_evals/ifeval",
+        "inspect_evals/livecodebench_pro",
+        "inspect_evals/mmlu_pro",
+        "inspect_evals/scicode",
+    ]
+
+
+def test_inspect_command_configures_existing_local_model_path(tmp_path) -> None:
+    model_path = tmp_path / "model"
+    model_path.mkdir()
+    wrapper = InspectWrapper(str(model_path), ["aime25"], "raw-logs")
+
+    cmd = wrapper.get_cli_cmd()
+
+    assert cmd[cmd.index("--model") + 1] == "hf/local"
+    assert cmd[cmd.index("-M") + 1] == f"model_path={model_path}"
 
 
 def test_inspect_command_preserves_explicit_openai_model_base_url() -> None:
@@ -36,3 +64,79 @@ def test_inspect_command_preserves_explicit_openai_model_base_url() -> None:
     assert cmd[cmd.index("--model") + 1] == "openai/some/model"
     assert "--model-base-url" in cmd
     assert cmd[cmd.index("--model-base-url") + 1] == "http://localhost:8000/v1"
+
+
+def test_prepare_results_normalizes_configured_metric() -> None:
+    wrapper = InspectWrapper("some/model", ["aime25"], "raw-logs")
+    log = cast(
+        "EvalLog",
+        SimpleNamespace(
+            eval=SimpleNamespace(task="inspect_evals/aime2025"),
+            status="success",
+            stats=None,
+            results=SimpleNamespace(
+                scores=[
+                    SimpleNamespace(
+                        name="accuracy",
+                        metrics={"accuracy": SimpleNamespace(value=0.75)},
+                    )
+                ]
+            ),
+        ),
+    )
+
+    results = wrapper._prepare_log_results(log, "run-123")
+
+    assert results == [
+        {
+            "Run ID": "run-123",
+            "Framework": "inspect-ai",
+            "Benchmark": "aime25",
+            "Metric": "accuracy (%) ⬆️",
+            "Score": 75.0,
+            "Runtime (sec)": "N/A",
+        }
+    ]
+
+
+def test_prepare_results_reports_failed_task() -> None:
+    wrapper = InspectWrapper("some/model", ["ifeval"], "raw-logs")
+    log = cast(
+        "EvalLog",
+        SimpleNamespace(
+            eval=SimpleNamespace(task="inspect_evals/ifeval"),
+            status="error",
+            stats=None,
+            results=None,
+        ),
+    )
+
+    results = wrapper._prepare_log_results(log, "run-123")
+
+    assert results[0]["Metric"] == "final_acc"
+    assert results[0]["Score"] == "Failed (error)"
+
+
+def test_prepare_results_reports_missing_configured_metric() -> None:
+    wrapper = InspectWrapper("some/model", ["aime25"], "raw-logs")
+    log = cast(
+        "EvalLog",
+        SimpleNamespace(
+            eval=SimpleNamespace(task="inspect_evals/aime2025"),
+            status="success",
+            stats=None,
+            results=SimpleNamespace(
+                scores=[
+                    SimpleNamespace(
+                        name="accuracy",
+                        metrics={"other_metric": SimpleNamespace(value=0.5)},
+                    )
+                ]
+            ),
+        ),
+    )
+
+    results = wrapper._prepare_log_results(log, "run-123")
+
+    assert results[0]["Metric"] == "accuracy"
+    assert results[0]["Score"] == "Metric 'accuracy' not found"

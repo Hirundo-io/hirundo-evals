@@ -213,7 +213,7 @@ def main(
         typer.Argument(
             help=(
                 f"The evaluation framework to use. Currently supports: "
-                f"({', '.join(e.value for e in EvalFramework)})"
+                f"({', '.join(framework.value for framework in EvalFramework)})"
             ),
         ),
     ],
@@ -232,7 +232,10 @@ def main(
         str | None,
         typer.Option(
             "--model-base-url",
-            help="The base URL of the model. Required if the model is hosted externally.",
+            help=(
+                "Optional base URL for the model. "
+                "Required when the model is hosted externally."
+            ),
         ),
     ] = None,
     vllm_local: Annotated[
@@ -278,7 +281,7 @@ def main(
     except ValueError:
         raise typer.BadParameter(
             f"Framework '{framework}' is not supported. "
-            f"Currently supported frameworks: {', '.join(e.value for e in EvalFramework)}"
+            f"Currently supported frameworks: {', '.join(framework.value for framework in EvalFramework)}"
         ) from None
     # Parse the tasks
     parsed_tasks = _parse_tasks(tasks)

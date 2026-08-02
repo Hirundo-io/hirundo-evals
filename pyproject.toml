@@ -24,10 +24,10 @@ keywords = [
   "large language models",
   "LLMs evaluation",
 ]
-requires-python = ">=3.10.12,<3.14"
+requires-python = ">=3.11,<3.14"
 dependencies = [
   "inspect-ai",
-  "inspect-evals",
+  "inspect-evals>=0.16.0",
   "instruction-following-eval @ git+https://github.com/josejg/instruction_following_eval",
   "accelerate",
   "typer",
@@ -46,9 +46,10 @@ dev = [
   "bumpver>=2024.1130",
   "pytest>=8.3.5",
   "pre-commit>=4.3.0",
-  "hirundo-evals[mlflow,vllm,gcs]",
+  "hirundo-evals[mlflow,gcs]",
   "pyrefly>=0.63.1",
 ]
+local-dev = ["hirundo-evals[vllm]"]
 docs = ["sphinx>=8.0.0"]
 
 [tool.uv.dependency-groups]
@@ -91,12 +92,10 @@ select = [
   "A",
   "TID",
   "TC",
-  "NPY",
 ]
-ignore = ["C901", "N806"]
+ignore = ["N806"]
 
 fixable = ["ALL"]
-unfixable = ["F401"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*.py" = ["S"]
