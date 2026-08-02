@@ -1,0 +1,110 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+hirundo-evals = "hirundo_evals.run:app"
+
+[project]
+name = "hirundo-evals"
+version = "0.1.0"
+description = "Evaluate large-language models using inspect-ai and other frameworks."
+authors = [{ name = "Hirundo", email = "dev@hirundo.io" }]
+readme = "README.md"
+license = { file = "LICENSE" }
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+]
+keywords = [
+  "dataset",
+  "machine learning",
+  "data science",
+  "large language models",
+  "LLMs evaluation",
+]
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "inspect-ai",
+  "inspect-evals>=0.16.0",
+  "instruction-following-eval",
+  "inspect-harbor",
+  "accelerate",
+  "typer",
+  "bidict",
+]
+
+[project.optional-dependencies]
+mlflow = ["mlflow>=2.0.0"]
+vllm = ["vllm>=0.15.0"]
+gcs = ["google-cloud-storage"]
+gpt-oss = ["opencv-python-headless>=4.12.0.88"]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.11.11,<1.0.0",
+  "bumpver>=2024.1130",
+  "pytest>=8.3.5",
+  "pre-commit>=4.3.0",
+  "hirundo-evals[mlflow,gcs]",
+  "pyrefly>=0.63.1",
+]
+local-dev = ["hirundo-evals[vllm]"]
+docs = ["sphinx>=8.0.0"]
+
+[tool.uv.dependency-groups]
+docs = { requires-python = ">=3.12" }
+
+[tool.uv.sources]
+hirundo-evals = { path = ".", editable = true }
+instruction-following-eval = { git = "https://github.com/josejg/instruction_following_eval", rev = "0c495b2" }
+
+[tool.setuptools.packages.find]
+include = ["hirundo_evals*"]
+exclude = ["results*"]
+
+[tool.bumpver]
+current_version = "0.1.0"
+version_pattern = "MAJOR.MINOR.PATCH[PYTAGNUM]"
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+  '^version = "{version}"$',
+  '^current_version = "{version}"$',
+]
+"hirundo_evals/__init__.py" = ['^__version__ = "{version}"$']
+
+[project.urls]
+Homepage = "https://github.com/Hirundo-io/hirundo-evals"
+
+[tool.ruff.lint]
+select = [
+  "E4",
+  "E7",
+  "E9",
+  "F",
+  "W",
+  "C901",
+  "I",
+  "N",
+  "UP",
+  "S",
+  "B",
+  "A",
+  "TID",
+  "TC",
+]
+ignore = ["N806"]
+
+fixable = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["S"]
+
+[tool.pyrefly]
+min-severity = "warn"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = [".git", ".venv", "dist", "logs"]
