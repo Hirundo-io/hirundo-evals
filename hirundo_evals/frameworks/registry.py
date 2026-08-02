@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from ._base import BaseEvalFrameworkWrapper
 
 
-class EvalFramework(str, Enum):
+class EvalFramework(StrEnum):
     INSPECT = "inspect-ai"
     # Add future frameworks here (e.g., ELEUTHER = "lm-eval", LIGHTEVAL = "lighteval")
 
