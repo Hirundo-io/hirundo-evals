@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 class EvalFramework(str, Enum):
     INSPECT = "inspect-ai"
-    # Add future frameworks here (e.g., ELEUTHER = "lm-eval", LIGHTEVAL = "lighteval")
+    PINCHBENCH = "pinchbench"
 
 
 def get_eval_framework_wrapper(
@@ -30,6 +30,10 @@ def get_eval_framework_wrapper(
         from .inspect_ai.wrapper import InspectWrapper
 
         wrapper = InspectWrapper
+    elif framework == EvalFramework.PINCHBENCH:
+        from .inspect_ai.external.pinchbench.wrapper import PinchBenchWrapper
+
+        wrapper = PinchBenchWrapper
     else:
         raise NotImplementedError(
             f"Framework '{framework}' is not yet supported. "

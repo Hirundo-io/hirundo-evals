@@ -111,7 +111,9 @@ async def run_with_vllm(
 
     try:
         async with serve_vllm(
-            framework_wrapper.model, vllm_args, port=vllm_port
+            framework_wrapper.model,
+            vllm_args,
+            port=vllm_port,
         ) as server_url:
             # Map the model to use the local OpenAI compatible endpoint
             local_model = f"openai/{framework_wrapper.model}"
@@ -179,6 +181,12 @@ def run_evaluation(
     logging.info(f"📊 CSV Output: {output_dir / 'results.csv'}")
     # Get the evaluation framework wrapper
     framework_wrapper = get_eval_framework_wrapper(framework, model, tasks, log_dir)
+    if not framework_wrapper.SUPPORTS_UNSERVED_MODELS and not run_with_local_vllm:
+        logging.warning(
+            "The framework does not support unserved models, but --vllm-local/run_with_local_vllm is not specified. "
+            "Running with a local vLLM server..."
+        )
+        run_with_local_vllm = True
     # Run the evaluation
     if run_with_local_vllm:
         # Parse the vLLM CLI arguments

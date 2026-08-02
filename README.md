@@ -81,11 +81,12 @@ Example `results.csv` output:
 
 ## Supported Frameworks
 
-Supported frameworks currently include Inspect AI.
+Supported frameworks currently include Inspect AI and the Inspect AI PinchBench adapter.
 
 For adapter-specific details, see the relevant framework documentation:
 
 - [Inspect AI](hirundo_evals/frameworks/inspect_ai/README.md)
+- [PinchBench](hirundo_evals/frameworks/inspect_ai/external/pinchbench/README.md)
 
 ## Contributing
 

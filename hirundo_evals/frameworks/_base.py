@@ -14,7 +14,7 @@ OutputEntry = TypedDict(
         "Benchmark": str,
         "Metric": str,
         "Score": float | str,
-        "Runtime (sec)": int | str,
+        "Runtime (sec)": float | str,
     },
 )
 
@@ -27,7 +27,13 @@ class BaseEvalFrameworkWrapper(ABC):
         model: The model to evaluate.
         tasks: The tasks/benchmarks to evaluate.
         log_dir: The directory in which to save the outputs.
+
+    Class Attributes:
+        SUPPORTS_UNSERVED_MODELS: Whether the framework supports unserved models.
+
     """
+
+    SUPPORTS_UNSERVED_MODELS = True
 
     def __init__(self, model: str, tasks: list[str], log_dir: str | Path):
         self.model = model
@@ -79,6 +85,41 @@ class BaseEvalFrameworkWrapper(ABC):
         # The adapter builds an argument list without shell=True, so values are
         # passed as arguments rather than interpreted as shell syntax.
         subprocess.run(cmd, check=True)  # noqa: S603
+
+    def _failure_output_entries(
+        self,
+        framework: str,
+        benchmark: str,
+        status: str,
+        runtime: float | str,
+        metric_names: list[str] | None = None,
+    ) -> list[OutputEntry]:
+        """
+        Build CSV rows for a failed evaluation log.
+
+        Args:
+            framework: Name of the evaluation framework.
+            benchmark: Name of the benchmark.
+            status: Failure status from the evaluation log.
+            runtime: Evaluation runtime in seconds, or "N/A".
+            metric_names: Optional metric names to include in the output.
+
+        Returns:
+            CSV rows containing the failure status for each metric.
+        """
+        return [
+            OutputEntry(
+                {
+                    "Run ID": Path(self.log_dir).name,
+                    "Framework": framework,
+                    "Benchmark": benchmark,
+                    "Metric": metric_name,
+                    "Score": f"Failed ({status})",
+                    "Runtime (sec)": runtime,
+                }
+            )
+            for metric_name in (metric_names or ["status"])
+        ]
 
     @abstractmethod
     def prepare_results(self) -> list[OutputEntry]:
